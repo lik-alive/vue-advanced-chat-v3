@@ -1,8 +1,10 @@
-import Vue from 'vue'
+import { createApp, configureCompat } from 'vue'
 import App from './App.vue'
 
-Vue.config.productionTip = false
+configureCompat({
+	ATTR_FALSE_VALUE: false,
+	WATCH_ARRAY: false
+})
 
-new Vue({
-	render: h => h(App)
-}).$mount('#app')
+const app = createApp(App)
+app.mount('#app')

@@ -14,6 +14,7 @@ module.exports = {
 				deepData: true
 			}
 		],
+		'vue/no-v-for-template-key': 'off',
 		'no-empty-pattern': 'off',
 		'no-unused-vars': 'warn',
 		'valid-typeof': 'off',

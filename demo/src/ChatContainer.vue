@@ -5,9 +5,7 @@
 			<button type="submit" :disabled="disableForm || !addRoomUsername">
 				Create Room
 			</button>
-			<button class="button-cancel" @click="addNewRoom = false">
-				Cancel
-			</button>
+			<button class="button-cancel" @click="addNewRoom = false">Cancel</button>
 		</form>
 
 		<form @submit.prevent="addRoomUser" v-if="inviteRoomId">
@@ -15,9 +13,7 @@
 			<button type="submit" :disabled="disableForm || !invitedUsername">
 				Add User
 			</button>
-			<button class="button-cancel" @click="inviteRoomId = null">
-				Cancel
-			</button>
+			<button class="button-cancel" @click="inviteRoomId = null">Cancel</button>
 		</form>
 
 		<form @submit.prevent="deleteRoomUser" v-if="removeRoomId">
@@ -30,13 +26,12 @@
 			<button type="submit" :disabled="disableForm || !removeUserId">
 				Remove User
 			</button>
-			<button class="button-cancel" @click="removeRoomId = null">
-				Cancel
-			</button>
+			<button class="button-cancel" @click="removeRoomId = null">Cancel</button>
 		</form>
 
 		<chat-window
 			:height="screenHeight"
+			:show-audio="false"
 			:theme="theme"
 			:styles="styles"
 			:current-user-id="currentUserId"
@@ -80,7 +75,9 @@ import {
 	deleteDbField
 } from '@/firestore'
 import { parseTimestamp, isSameDay } from '@/utils/dates'
-import ChatWindow from './../../src/lib/ChatWindow'
+import ChatWindow from './components/ChatWindow/lib/ChatWindow.vue'
+// import 'vue-advanced-chat/dist/vue-advanced-chat.css'
+
 // import ChatWindow, { Rooms } from 'vue-advanced-chat'
 // import ChatWindow from 'vue-advanced-chat'
 // import 'vue-advanced-chat/dist/vue-advanced-chat.css'
@@ -143,7 +140,7 @@ export default {
 		this.updateUserOnlineStatus()
 	},
 
-	destroyed() {
+	unmounted() {
 		this.resetRooms()
 	},
 
@@ -312,8 +309,9 @@ export default {
 
 			let content = message.content
 			if (message.file)
-				content = `${message.file.name}.${message.file.extension ||
-					message.file.type}`
+				content = `${message.file.name}.${
+					message.file.extension || message.file.type
+				}`
 
 			return {
 				...message,
@@ -396,7 +394,7 @@ export default {
 				if (messageIndex === -1) {
 					this.messages = this.messages.concat([formattedMessage])
 				} else {
-					this.$set(this.messages, messageIndex, formattedMessage)
+					this.messages[messageIndex] = formattedMessage;
 				}
 
 				this.markMessagesSeen(room, message)
@@ -554,17 +552,13 @@ export default {
 				newMessage.file = deleteDbField
 			}
 
-			await messagesRef(roomId)
-				.doc(messageId)
-				.update(newMessage)
+			await messagesRef(roomId).doc(messageId).update(newMessage)
 
 			if (file?.blob) this.uploadFile({ file, messageId, roomId })
 		},
 
 		async deleteMessage({ message, roomId }) {
-			await messagesRef(roomId)
-				.doc(message._id)
-				.update({ deleted: new Date() })
+			await messagesRef(roomId).doc(message._id).update({ deleted: new Date() })
 
 			const { file } = message
 
@@ -708,7 +702,7 @@ export default {
 								r => room.roomId === r.roomId
 							)
 
-							this.$set(this.rooms, roomIndex, room)
+							this.rooms[roomIndex] = room;
 						})
 					this.roomsListeners.push(listener)
 				})

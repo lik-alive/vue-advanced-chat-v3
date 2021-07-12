@@ -23,7 +23,7 @@
 			@room-info="$emit('room-info')"
 			@menu-action-handler="$emit('menu-action-handler', $event)"
 		>
-			<template v-for="(i, name) in $scopedSlots" #[name]="data">
+			<template v-for="(i, name) in $slots" #[name]="data">
 				<slot :name="name" v-bind="data" />
 			</template>
 		</room-header>
@@ -42,7 +42,7 @@
 								{{ textMessages.MESSAGES_EMPTY }}
 							</slot>
 						</div>
-						<div v-if="showMessagesStarted" class="vac-text-started">
+						<div v-else-if="showMessagesStarted" class="vac-text-started">
 							{{ textMessages.CONVERSATION_STARTED }} {{ messages[0].date }}
 						</div>
 					</transition>
@@ -64,7 +64,7 @@
 							<div slot="no-more" />
 						</infinite-loading>
 					</transition>
-					<transition-group :key="roomId" name="vac-fade-message">
+					<transition-group :key="roomId" name="vac-fade-message" tag="span">
 						<div v-for="(m, i) in messages" :key="m._id">
 							<message
 								:current-user-id="currentUserId"
@@ -90,7 +90,7 @@
 								@send-message-reaction="sendMessageReaction"
 								@hide-options="hideOptions = $event"
 							>
-								<template v-for="(idx, name) in $scopedSlots" #[name]="data">
+								<template v-for="(idx, name) in $slots" #[name]="data">
 									<slot :name="name" v-bind="data" />
 								</template>
 							</message>
@@ -128,7 +128,7 @@
 				:link-options="linkOptions"
 				@reset-message="resetMessage"
 			>
-				<template v-for="(i, name) in $scopedSlots" #[name]="data">
+				<template v-for="(i, name) in $slots" #[name]="data">
 					<slot :name="name" v-bind="data" />
 				</template>
 			</room-message-reply>
@@ -271,7 +271,7 @@
 						@add-emoji="addEmoji"
 						@open-emoji="emojiOpened = $event"
 					>
-						<template v-for="(i, name) in $scopedSlots" #[name]="data">
+						<template v-for="(i, name) in $slots" #[name]="data">
 							<slot :name="name" v-bind="data" />
 						</template>
 					</emoji-picker>
@@ -301,7 +301,7 @@
 						ref="file"
 						type="file"
 						:accept="acceptedFiles"
-						style="display:none"
+						style="display: none"
 						@change="onFileChange($event.target.files)"
 					/>
 
@@ -538,7 +538,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		this.stopRecorder()
 	},
 
