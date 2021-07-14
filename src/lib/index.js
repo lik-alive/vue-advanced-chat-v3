@@ -1,4 +1,4 @@
-import ChatWindow from './Test'
+import ChatWindow from './ChatWindow'
 
 Object.defineProperty(ChatWindow, 'install', {
 	configurable: false,
