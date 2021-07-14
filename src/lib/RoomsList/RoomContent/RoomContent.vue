@@ -113,8 +113,6 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside'
-
 import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 import FormatMessage from '../../../components/FormatMessage/FormatMessage'
 
@@ -126,10 +124,6 @@ export default {
 	components: {
 		SvgIcon,
 		FormatMessage
-	},
-
-	directives: {
-		clickOutside: vClickOutside.directive
 	},
 
 	props: {

@@ -321,8 +321,8 @@
 </template>
 
 <script>
-import InfiniteLoading from '../../../InfiniteLoading/index'
-import emojis from '../../../EmojiPicker/emojis'
+import InfiniteLoading from '../../components/InfiniteLoading/index'
+import emojis from '../../components/EmojiPicker/emojis'
 
 import Loader from '../../components/Loader/Loader'
 import SvgIcon from '../../components/SvgIcon/SvgIcon'

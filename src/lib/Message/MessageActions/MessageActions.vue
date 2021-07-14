@@ -82,8 +82,6 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside'
-
 import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 import EmojiPicker from '../../../components/EmojiPicker/EmojiPicker'
 
@@ -92,10 +90,6 @@ const { isImageFile } = require('../../../utils/media-file')
 export default {
 	name: 'MessageActions',
 	components: { SvgIcon, EmojiPicker },
-
-	directives: {
-		clickOutside: vClickOutside.directive
-	},
 
 	props: {
 		currentUserId: { type: [String, Number], required: true },

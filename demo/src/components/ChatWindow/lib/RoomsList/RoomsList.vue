@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import InfiniteLoading from '../../../InfiniteLoading/index'
+import InfiniteLoading from '../../components/InfiniteLoading/index'
 
 import Loader from '../../components/Loader/Loader'
 

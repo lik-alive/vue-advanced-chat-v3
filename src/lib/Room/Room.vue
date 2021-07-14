@@ -52,16 +52,15 @@
 							:class="{ 'vac-infinite-loading': !messagesLoaded }"
 							force-use-infinite-wrapper=".vac-container-scroll"
 							web-component-name="vue-advanced-chat"
-							spinner="spiral"
 							direction="top"
 							:distance="40"
 							@infinite="loadMoreMessages"
 						>
-							<div slot="spinner">
+							<template #spinner>
 								<loader :show="true" :infinite="true" />
-							</div>
-							<div slot="no-results" />
-							<div slot="no-more" />
+							</template>
+							<template #no-results><div></div></template>
+							<template #no-more><div></div></template>
 						</infinite-loading>
 					</transition>
 					<transition-group :key="roomId" name="vac-fade-message" tag="span">
@@ -322,9 +321,8 @@
 </template>
 
 <script>
-import InfiniteLoading from 'vue-infinite-loading'
-import vClickOutside from 'v-click-outside'
-import emojis from 'vue-emoji-picker/src/emojis'
+import InfiniteLoading from '../../components/InfiniteLoading/index'
+import emojis from '../../components/EmojiPicker/emojis'
 
 import Loader from '../../components/Loader/Loader'
 import SvgIcon from '../../components/SvgIcon/SvgIcon'
@@ -353,10 +351,6 @@ export default {
 		RoomUsersTag,
 		RoomEmojis,
 		Message
-	},
-
-	directives: {
-		clickOutside: vClickOutside.directive
 	},
 
 	props: {
@@ -526,16 +520,16 @@ export default {
 			this.updateFooterList(':')
 		})
 
-		this.$refs['roomTextarea'].addEventListener('click', () => {
-			if (isMobile) this.keepKeyboardOpen = true
-			this.updateFooterList('@')
-			this.updateFooterList(':')
-		})
+		// this.$refs['roomTextarea'].addEventListener('click', () => {
+		// 	if (isMobile) this.keepKeyboardOpen = true
+		// 	this.updateFooterList('@')
+		// 	this.updateFooterList(':')
+		// })
 
-		this.$refs['roomTextarea'].addEventListener('blur', () => {
-			this.resetFooterList()
-			if (isMobile) setTimeout(() => (this.keepKeyboardOpen = false))
-		})
+		// this.$refs['roomTextarea'].addEventListener('blur', () => {
+		// 	this.resetFooterList()
+		// 	if (isMobile) setTimeout(() => (this.keepKeyboardOpen = false))
+		// })
 	},
 
 	beforeUnmount() {

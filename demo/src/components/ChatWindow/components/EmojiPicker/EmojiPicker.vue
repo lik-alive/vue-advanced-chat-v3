@@ -1,6 +1,6 @@
 <template>
 	<div class="vac-wrapper">
-		<emoji-picker :search="search" @emoji="append">
+		<emoji-picker-base :search="search" @emoji="append">
 			<template #emoji-invoker="{ events: { click: clickEvent } }">
 				<div
 					class="vac-svg-button"
@@ -48,18 +48,18 @@
 					</div>
 				</transition>
 			</template>
-		</emoji-picker>
+		</emoji-picker-base>
 	</div>
 </template>
 
 <script>
-import EmojiPicker from '../../../EmojiPicker/main.js'
+import EmojiPickerBase from './components/EmojiPickerBase.vue'
 
 import SvgIcon from '../SvgIcon/SvgIcon'
 
 export default {
 	components: {
-		EmojiPicker,
+		EmojiPickerBase,
 		SvgIcon
 	},
 

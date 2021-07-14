@@ -77,7 +77,6 @@ export default {
 			this.display.y = e.clientY
 		},
 		hide() {
-			console.log('hide')
 			this.display.visible = false
 		},
 		escape(e) {
