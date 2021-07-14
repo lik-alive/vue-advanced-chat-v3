@@ -63,8 +63,12 @@
 					<template #spinner>
 						<loader :show="true" :infinite="true" />
 					</template>
-					<template #no-results><div></div></template>
-					<template #no-more><div></div></template>
+					<template #no-results>
+<div />
+</template>
+					<template #no-more>
+<div />
+</template>
 				</infinite-loading>
 			</transition>
 		</div>

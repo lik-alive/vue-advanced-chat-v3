@@ -124,10 +124,12 @@ export default {
 			default: config.props.forceUseInfiniteWrapper
 		},
 		identifier: {
+			type: [Object],
 			default: +new Date()
 		},
 		webComponentName: {
-			type: [String]
+			type: [String],
+			default: ''
 		}
 	},
 	watch: {

@@ -6,7 +6,7 @@ export default {
     'confused': '😕',
     'neutral_face': '😐',
     'blush': '😊',
-    'heart_eyes': '😍',
+    'heart_eyes': '😍'
   },
   'People': {
     'smile': '😄',
@@ -186,7 +186,7 @@ export default {
     'gem': '💎',
     'bust_in_silhouette': '👤',
     'speech_balloon': '💬',
-    'footprints': '👣',
+    'footprints': '👣'
   },
   'Nature': {
     'dog': '🐶',
@@ -267,7 +267,7 @@ export default {
     'cyclone': '🌀',
     'foggy': '🌁',
     'rainbow': '🌈',
-    'ocean': '🌊',
+    'ocean': '🌊'
   },
   'Objects': {
     'bamboo': '🎍',
@@ -471,7 +471,7 @@ export default {
     'sweet_potato': '🍠',
     'eggplant': '🍆',
     'tomato': '🍅',
-    'corn': '🌽',
+    'corn': '🌽'
   },
   'Places': {
     'house': '🏠',
@@ -538,7 +538,7 @@ export default {
     'circus_tent': '🎪',
     'performing_arts': '🎭',
     'round_pushpin': '📍',
-    'triangular_flag_on_post': '🚩',
+    'triangular_flag_on_post': '🚩'
   },
   'Symbols': {
     'keycap_ten': '🔟',
@@ -644,6 +644,6 @@ export default {
     'large_orange_diamond': '🔶',
     'large_blue_diamond': '🔷',
     'small_orange_diamond': '🔸',
-    'small_blue_diamond': '🔹',
-  },
+    'small_blue_diamond': '🔹'
+  }
 }

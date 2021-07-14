@@ -1,47 +1,47 @@
 <template>
 	<div class="infinite-loading-container">
 		<div
-			class="infinite-status-prompt"
 			v-show="isShowSpinner"
+			class="infinite-status-prompt"
 			:style="slotStyles.spinner"
 		>
-			<slot name="spinner" v-bind="{ isFirstLoad }"></slot>
+			<slot name="spinner" v-bind="{ isFirstLoad }" />
 		</div>
 		<div
+			v-show="isShowNoResults"
 			class="infinite-status-prompt"
 			:style="slotStyles.noResults"
-			v-show="isShowNoResults"
 		>
 			<slot name="no-results">
-				<component
-					v-if="slots.noResults.render"
-					:is="slots.noResults"
-				></component>
-				<template v-else>{{ slots.noResults }}</template>
+				<component :is="slots.noResults" v-if="slots.noResults.render" />
+				<template v-else>
+					{{ slots.noResults }}
+				</template>
 			</slot>
 		</div>
 		<div
+			v-show="isShowNoMore"
 			class="infinite-status-prompt"
 			:style="slotStyles.noMore"
-			v-show="isShowNoMore"
 		>
 			<slot name="no-more">
-				<component v-if="slots.noMore.render" :is="slots.noMore"></component>
-				<template v-else>{{ slots.noMore }}</template>
+				<component :is="slots.noMore" v-if="slots.noMore.render" />
+				<template v-else>
+					{{ slots.noMore }}
+				</template>
 			</slot>
 		</div>
 		<div
+			v-if="isShowError"
 			class="infinite-status-prompt"
 			:style="slotStyles.error"
-			v-if="isShowError"
 		>
 			<slot name="error" :trigger="attemptLoad">
 				<component
-					v-if="slots.error.render"
 					:is="slots.error"
+					v-if="slots.error.render"
 					:trigger="attemptLoad"
-				>
-				</component>
+				/>
 				<template v-else>
 					{{ slots.error }}
 					<br />
@@ -49,7 +49,7 @@
 						class="btn-try-infinite"
 						@click="attemptLoad"
 						v-text="slots.errorBtnText"
-					></button>
+					/>
 				</template>
 			</slot>
 		</div>
@@ -68,6 +68,28 @@ import {
 
 export default {
 	name: 'InfiniteLoading',
+	props: {
+		distance: {
+			type: Number,
+			default: config.props.distance
+		},
+		direction: {
+			type: String,
+			default: 'bottom'
+		},
+		forceUseInfiniteWrapper: {
+			type: [Boolean, String],
+			default: config.props.forceUseInfiniteWrapper
+		},
+		identifier: {
+			type: [Object],
+			default: +new Date()
+		},
+		webComponentName: {
+			type: [String],
+			default: ''
+		}
+	},
 	data() {
 		return {
 			scrollParent: null,
@@ -108,26 +130,6 @@ export default {
 			})
 
 			return styles
-		}
-	},
-	props: {
-		distance: {
-			type: Number,
-			default: config.props.distance
-		},
-		direction: {
-			type: String,
-			default: 'bottom'
-		},
-		forceUseInfiniteWrapper: {
-			type: [Boolean, String],
-			default: config.props.forceUseInfiniteWrapper
-		},
-		identifier: {
-			default: +new Date()
-		},
-		webComponentName: {
-			type: [String]
 		}
 	},
 	watch: {
@@ -198,6 +200,18 @@ export default {
 	},
 	activated() {
 		this.scrollParent.addEventListener('scroll', this.scrollHandler, evt3rdArg)
+	},
+	unmounted() {
+		/* istanbul ignore else */
+		if (!this.status !== STATUS.COMPLETE) {
+			throttleer.reset()
+			scrollBarStorage.remove(this.scrollParent)
+			this.scrollParent.removeEventListener(
+				'scroll',
+				this.scrollHandler,
+				evt3rdArg
+			)
+		}
 	},
 	methods: {
 		InfiniteLoading_loaded(ev) {
@@ -359,18 +373,6 @@ export default {
 			}
 
 			return result || this.getScrollParent(elm.parentNode)
-		}
-	},
-	unmounted() {
-		/* istanbul ignore else */
-		if (!this.status !== STATUS.COMPLETE) {
-			throttleer.reset()
-			scrollBarStorage.remove(this.scrollParent)
-			this.scrollParent.removeEventListener(
-				'scroll',
-				this.scrollHandler,
-				evt3rdArg
-			)
 		}
 	}
 }

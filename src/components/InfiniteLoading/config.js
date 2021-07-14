@@ -10,8 +10,8 @@ const props = {
   distance: 100,
 
   // the default force use infinite wrapper flag
-  forceUseInfiniteWrapper: false,
-};
+  forceUseInfiniteWrapper: false
+}
 
 /**
  * default system settings
@@ -25,8 +25,8 @@ const system = {
   loopCheckTimeout: 1000,
 
   // the max allowed number of continuous calls, unit: ms
-  loopCheckMaxCalls: 10,
-};
+  loopCheckMaxCalls: 10
+}
 
 /**
  * default slot messages
@@ -36,8 +36,8 @@ const slots = {
   noMore: 'No more data :)',
   error: 'Opps, something went wrong :(',
   errorBtnText: 'Retry',
-  spinner: '',
-};
+  spinner: ''
+}
 
 /**
  * the 3rd argument for event bundler
@@ -45,22 +45,22 @@ const slots = {
  */
 
 export const evt3rdArg = (() => {
-  let result = false;
+  let result = false
 
   try {
     const arg = Object.defineProperty({}, 'passive', {
       get() {
-        result = { passive: true };
-        return true;
-      },
-    });
+        result = { passive: true }
+        return true
+      }
+    })
 
-    window.addEventListener('testpassive', arg, arg);
-    window.remove('testpassive', arg, arg);
+    window.addEventListener('testpassive', arg, arg)
+    window.remove('testpassive', arg, arg)
   } catch (e) { /* */ }
 
-  return result;
-})();
+  return result
+})()
 
 /**
  * warning messages
@@ -86,11 +86,11 @@ infiniteHandler($state) {
 }
 ...`,
     '',
-    'more details: https://github.com/PeachScript/vue-infinite-loading/issues/57#issuecomment-324370549',
+    'more details: https://github.com/PeachScript/vue-infinite-loading/issues/57#issuecomment-324370549'
   ].join('\n'),
   INFINITE_EVENT: '`:on-infinite` property will be deprecated soon, please use `@infinite` event instead.',
-  IDENTIFIER: 'the `reset` event will be deprecated soon, please reset this component by change the `identifier` property.',
-};
+  IDENTIFIER: 'the `reset` event will be deprecated soon, please reset this component by change the `identifier` property.'
+}
 
 /**
  * error messages
@@ -113,9 +113,9 @@ or
   <infinite-loading force-use-infinite-wrapper=".infinite-wrapper"></infinite-loading>
 </div>
     `,
-    'more details: https://github.com/PeachScript/vue-infinite-loading/issues/55#issuecomment-316934169',
-  ].join('\n'),
-};
+    'more details: https://github.com/PeachScript/vue-infinite-loading/issues/55#issuecomment-316934169'
+  ].join('\n')
+}
 
 /**
  * plugin status constants
@@ -124,8 +124,8 @@ export const STATUS = {
   READY: 0,
   LOADING: 1,
   COMPLETE: 2,
-  ERROR: 3,
-};
+  ERROR: 3
+}
 
 /**
  * default slot styles
@@ -133,8 +133,8 @@ export const STATUS = {
 export const SLOT_STYLES = {
   color: '#666',
   fontSize: '14px',
-  padding: '10px 0',
-};
+  padding: '10px 0'
+}
 
 export default {
   mode: 'development',
@@ -143,5 +143,5 @@ export default {
   slots,
   WARNINGS,
   ERRORS,
-  STATUS,
-};
+  STATUS
+}

@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<slot name="emoji-invoker" :events="{ click: e => toggle(e) }"></slot>
+		<slot name="emoji-invoker" :events="{ click: e => toggle(e) }" />
 		<div v-if="display.visible" v-click-outside="hide">
 			<slot
 				name="emoji-picker"
 				:emojis="emojis"
 				:insert="insert"
 				:display="display"
-			></slot>
+			/>
 		</div>
 	</div>
 </template>
@@ -67,6 +67,12 @@ export default {
 			return this.emojiTable
 		}
 	},
+	mounted() {
+		document.addEventListener('keyup', this.escape)
+	},
+	unmounted() {
+		document.removeEventListener('keyup', this.escape)
+	},
 	methods: {
 		insert(emoji) {
 			this.$emit('emoji', emoji)
@@ -84,12 +90,6 @@ export default {
 				this.display.visible = false
 			}
 		}
-	},
-	mounted() {
-		document.addEventListener('keyup', this.escape)
-	},
-	unmounted() {
-		document.removeEventListener('keyup', this.escape)
 	}
 }
 </script>
