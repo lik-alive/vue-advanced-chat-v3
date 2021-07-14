@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<slot name="emoji-invoker" :events="{ click: e => toggle(e) }" />
-		<div v-if="display.visible">
+		<div v-if="display.visible" v-click-outside="hide">
 			<slot
 				name="emoji-picker"
 				:emojis="emojis"
@@ -14,7 +14,6 @@
 
 <script>
 import vClickOutside from 'click-outside-vue3'
-console.log(vClickOutside)
 import emojis from '../emojis'
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
