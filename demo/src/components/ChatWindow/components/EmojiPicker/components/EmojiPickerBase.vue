@@ -13,12 +13,16 @@
 </template>
 
 <script>
+import vClickOutside from 'click-outside-vue3'
 import emojis from '../emojis'
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
 const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 export default {
+	directives: {
+		clickOutside: vClickOutside.directive
+	},
 	props: {
 		search: {
 			type: String,
