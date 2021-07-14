@@ -73,8 +73,6 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside'
-
 import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 
 import typingText from '../../../utils/typing-text'
@@ -83,10 +81,6 @@ export default {
 	name: 'RoomHeader',
 	components: {
 		SvgIcon
-	},
-
-	directives: {
-		clickOutside: vClickOutside.directive
 	},
 
 	props: {

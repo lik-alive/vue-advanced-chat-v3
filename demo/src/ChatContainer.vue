@@ -76,12 +76,6 @@ import {
 } from '@/firestore'
 import { parseTimestamp, isSameDay } from '@/utils/dates'
 import ChatWindow from './components/ChatWindow/lib/ChatWindow.vue'
-// import 'vue-advanced-chat/dist/vue-advanced-chat.css'
-
-// import ChatWindow, { Rooms } from 'vue-advanced-chat'
-// import ChatWindow from 'vue-advanced-chat'
-// import 'vue-advanced-chat/dist/vue-advanced-chat.css'
-// import ChatWindow from './../../dist/vue-advanced-chat.umd.min.js'
 
 export default {
 	components: {
@@ -394,7 +388,7 @@ export default {
 				if (messageIndex === -1) {
 					this.messages = this.messages.concat([formattedMessage])
 				} else {
-					this.messages[messageIndex] = formattedMessage;
+					this.messages[messageIndex] = formattedMessage
 				}
 
 				this.markMessagesSeen(room, message)
@@ -702,7 +696,7 @@ export default {
 								r => room.roomId === r.roomId
 							)
 
-							this.rooms[roomIndex] = room;
+							this.rooms[roomIndex] = room
 						})
 					this.roomsListeners.push(listener)
 				})
