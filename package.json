@@ -75,9 +75,7 @@
 		"core-js": "^3.15.2",
 		"lamejs": "^1.2.0",
 		"linkifyjs": "^2.1.9",
-		"v-click-outside": "^3.1.2",
-		"vue-emoji-picker": "https://github.com/lik-alive/vue-emoji-picker-v3.git",
-		"vue-infinite-loading": "https://github.com/lik-alive/vue-infinite-loading-v3.git"
+		"v-click-outside": "^3.1.2"
 	},
 	"optionalDependencies": {
 		"lamejs": "^1.2.0"
