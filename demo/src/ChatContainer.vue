@@ -5,7 +5,9 @@
 			<button type="submit" :disabled="disableForm || !addRoomUsername">
 				Create Room
 			</button>
-			<button class="button-cancel" @click="addNewRoom = false">Cancel</button>
+			<button type="button" class="button-cancel" @click="addNewRoom = false">
+				Cancel
+			</button>
 		</form>
 
 		<form @submit.prevent="addRoomUser" v-if="inviteRoomId">
@@ -13,7 +15,9 @@
 			<button type="submit" :disabled="disableForm || !invitedUsername">
 				Add User
 			</button>
-			<button class="button-cancel" @click="inviteRoomId = null">Cancel</button>
+			<button type="button" class="button-cancel" @click="inviteRoomId = null">
+				Cancel
+			</button>
 		</form>
 
 		<form @submit.prevent="deleteRoomUser" v-if="removeRoomId">
@@ -26,7 +30,9 @@
 			<button type="submit" :disabled="disableForm || !removeUserId">
 				Remove User
 			</button>
-			<button class="button-cancel" @click="removeRoomId = null">Cancel</button>
+			<button type="button" class="button-cancel" @click="removeRoomId = null">
+				Cancel
+			</button>
 		</form>
 
 		<chat-window
