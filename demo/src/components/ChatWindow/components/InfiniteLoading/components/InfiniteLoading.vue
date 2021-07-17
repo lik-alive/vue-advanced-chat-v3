@@ -5,9 +5,7 @@
 			v-show="isShowSpinner"
 			:style="slotStyles.spinner"
 		>
-			<slot name="spinner" v-bind="{ isFirstLoad }">
-				<spinner :spinner="spinner" />
-			</slot>
+			<slot name="spinner" v-bind="{ isFirstLoad }"></slot>
 		</div>
 		<div
 			class="infinite-status-prompt"
@@ -35,7 +33,7 @@
 		<div
 			class="infinite-status-prompt"
 			:style="slotStyles.error"
-			v-show="isShowError"
+			v-if="isShowError"
 		>
 			<slot name="error" :trigger="attemptLoad">
 				<component
@@ -58,7 +56,6 @@
 	</div>
 </template>
 <script>
-import Spinner from './Spinner.vue'
 import config, { evt3rdArg, WARNINGS, STATUS, SLOT_STYLES } from '../config'
 import {
 	warn,
@@ -79,9 +76,6 @@ export default {
 			status: STATUS.READY,
 			slots: config.slots
 		}
-	},
-	components: {
-		Spinner
 	},
 	computed: {
 		isShowSpinner() {
@@ -104,9 +98,9 @@ export default {
 
 				if (
 					// no slot and the configured default slot is not a Vue component
-					(!this.$slots[name] && !config.slots[key].render) ||
+					(!this.$slots[name] && !config.slots[key]) ||
 					// has slot and slot is pure text node
-					(this.$slots[name] && !this.$slots[name][0].tag)
+					(this.$slots[name] && !this.$slots[name].tag)
 				) {
 					// only apply default styles for pure text slot
 					styles[key] = SLOT_STYLES
@@ -121,7 +115,6 @@ export default {
 			type: Number,
 			default: config.props.distance
 		},
-		spinner: String,
 		direction: {
 			type: String,
 			default: 'bottom'
@@ -135,9 +128,9 @@ export default {
 			default: +new Date()
 		},
 		webComponentName: {
-			type: [String]
-		},
-		onInfinite: Function
+			type: [String],
+			default: ''
+		}
 	},
 	watch: {
 		identifier() {
@@ -189,10 +182,6 @@ export default {
 				this.status = STATUS.ERROR
 				throttleer.reset()
 			}
-		}
-
-		if (this.onInfinite) {
-			warn(WARNINGS.INFINITE_EVENT)
 		}
 	},
 	/**
@@ -293,11 +282,7 @@ export default {
 					})
 				}
 
-				if (typeof this.onInfinite === 'function') {
-					this.onInfinite.call(null, this.stateChanger)
-				} else {
-					this.$emit('infinite', this.stateChanger)
-				}
+				this.$emit('infinite', this.stateChanger)
 
 				if (
 					isContinuousCall &&
@@ -392,23 +377,10 @@ export default {
 	}
 }
 </script>
-<style lang="less" scoped>
-@deep: ~':deep()';
-
+<style lang="scss" scoped>
 .infinite-loading-container {
 	clear: both;
 	text-align: center;
-
-	@{deep} *[class^='loading-'] {
-		@size: 28px;
-		display: inline-block;
-		margin: 5px 0;
-		width: @size;
-		height: @size;
-		font-size: @size;
-		line-height: @size;
-		border-radius: 50%;
-	}
 }
 
 .btn-try-infinite {

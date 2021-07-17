@@ -58,14 +58,13 @@
 					v-if="rooms.length && !loadingRooms"
 					force-use-infinite-wrapper=".vac-room-list"
 					web-component-name="vue-advanced-chat"
-					spinner="spiral"
 					@infinite="loadMoreRooms"
 				>
-					<div slot="spinner">
+					<template #spinner>
 						<loader :show="true" :infinite="true" />
-					</div>
-					<div slot="no-results" />
-					<div slot="no-more" />
+					</template>
+					<template #no-results><div></div></template>
+					<template #no-more><div></div></template>
 				</infinite-loading>
 			</transition>
 		</div>
@@ -73,7 +72,7 @@
 </template>
 
 <script>
-import InfiniteLoading from '../../../InfiniteLoading/index'
+import InfiniteLoading from '../../components/InfiniteLoading/index'
 
 import Loader from '../../components/Loader/Loader'
 

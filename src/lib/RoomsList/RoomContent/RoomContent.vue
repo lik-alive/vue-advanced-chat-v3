@@ -113,8 +113,7 @@
 </template>
 
 <script>
-import vClickOutside from 'v-click-outside'
-
+import vClickOutside from 'click-outside-vue3'
 import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 import FormatMessage from '../../../components/FormatMessage/FormatMessage'
 
@@ -123,13 +122,12 @@ const { isAudioFile } = require('../../../utils/media-file')
 
 export default {
 	name: 'RoomsContent',
+	directives: {
+		clickOutside: vClickOutside.directive
+	},
 	components: {
 		SvgIcon,
 		FormatMessage
-	},
-
-	directives: {
-		clickOutside: vClickOutside.directive
 	},
 
 	props: {

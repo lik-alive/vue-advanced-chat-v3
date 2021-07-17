@@ -1,10 +1,7 @@
-import { createApp, configureCompat } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
-
-configureCompat({
-	ATTR_FALSE_VALUE: false,
-	WATCH_ARRAY: false
-})
+import vClickOutside from "click-outside-vue3"
 
 const app = createApp(App)
+app.use(vClickOutside)
 app.mount('#app')

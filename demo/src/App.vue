@@ -75,6 +75,12 @@ export default {
 					username: 'Yoda',
 					avatar:
 						'https://vignette.wikia.nocookie.net/teamavatarone/images/4/45/Yoda.jpg/revision/latest?cb=20130224160049'
+				},
+				{
+					_id: 'KIZat82MtIxlRf6r1v1z',
+					username: 'Test',
+					avatar:
+						'https://vignette.wikia.nocookie.net/teamavatarone/images/4/45/Yoda.jpg/revision/latest?cb=20130224160049'
 				}
 			],
 			currentUserId: '6R0MijpK6M4AIrwaaCY2',
