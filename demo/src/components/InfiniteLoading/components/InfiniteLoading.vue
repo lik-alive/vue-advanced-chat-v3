@@ -131,6 +131,7 @@ export default {
 			default: config.props.forceUseInfiniteWrapper
 		},
 		identifier: {
+			type: Number,
 			default: +new Date()
 		},
 		webComponentName: {
@@ -324,8 +325,8 @@ export default {
 						? this.scrollParent.scrollTop
 						: this.scrollParent.pageYOffset
 			} else {
-				const infiniteElmOffsetTopFromBottom =
-					this.$el.getBoundingClientRect().top
+				const infiniteElmOffsetTopFromBottom = this.$el.getBoundingClientRect()
+					.top
 				const scrollElmOffsetTopFromBottom =
 					this.scrollParent === window
 						? window.innerHeight
