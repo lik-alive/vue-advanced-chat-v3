@@ -378,6 +378,8 @@ export default {
 					this.messages.unshift(formattedMessage)
 				})
 
+				this.messages = [...this.messages]
+
 				const listener = listenerQuery.onSnapshot(snapshots => {
 					// this.incrementDbCounter('Listen Room Messages', snapshots.size)
 					this.listenMessages(snapshots, room)

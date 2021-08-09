@@ -1,18 +1,34 @@
-import { IMAGE_TYPES, VIDEO_TYPES, AUDIO_TYPES } from './constants'
+import { IMAGE_TYPES, VIDEO_TYPES, AUDIO_TYPES } from "./constants";
+import {
+  IMAGE_EXTENSIONS,
+  VIDEO_EXTENSIONS,
+  AUDIO_EXTENSIONS,
+} from "./constants";
 
 function checkMediaType(types, file) {
-	if (!file || !file.type) return
-	return types.some(t => file.type.toLowerCase().includes(t))
+  if (!file || !file.type) return;
+  return types.some((t) => file.type.toLowerCase().includes(t));
+}
+
+function checkMediaExtension(extensions, file) {
+  if (!file || !file.name) return;
+  return extensions.some((e) => file.name.toLowerCase().endsWith(e));
+}
+
+function checkMedia(types, extensions, file) {
+  if (file && file.type) return checkMediaType(types, file);
+  else if (file && file.name) return checkMediaExtension(extensions, file);
+  return false;
 }
 
 export function isImageFile(file) {
-	return checkMediaType(IMAGE_TYPES, file)
+  return checkMedia(IMAGE_TYPES, IMAGE_EXTENSIONS, file);
 }
 
 export function isVideoFile(file) {
-	return checkMediaType(VIDEO_TYPES, file)
+  return checkMedia(VIDEO_TYPES, VIDEO_EXTENSIONS, file);
 }
 
 export function isAudioFile(file) {
-	return checkMediaType(AUDIO_TYPES, file)
+  return checkMedia(AUDIO_TYPES, AUDIO_EXTENSIONS, file);
 }
