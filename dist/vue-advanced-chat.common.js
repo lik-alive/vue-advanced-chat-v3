@@ -19769,4 +19769,3 @@ module.exports = global.Promise;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=vue-advanced-chat.common.js.map

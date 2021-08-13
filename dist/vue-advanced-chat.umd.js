@@ -19780,4 +19780,3 @@ module.exports = global.Promise;
 
 /******/ });
 });
-//# sourceMappingURL=vue-advanced-chat.umd.js.map
