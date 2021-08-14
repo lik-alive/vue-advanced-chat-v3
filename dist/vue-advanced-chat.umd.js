@@ -13605,10 +13605,14 @@ var es_regexp_constructor = __webpack_require__("4d63");
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
 var es_regexp_to_string = __webpack_require__("25f0");
 
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.trim.js
+var es_string_trim = __webpack_require__("498a");
+
 // CONCATENATED MODULE: ./src/utils/format-string.js
 
 
 var _pseudoMarkdown;
+
 
 
 
@@ -13629,43 +13633,31 @@ var linkify = __webpack_require__("74fe"); // require('linkifyjs/plugins/hashtag
   var json = compileToJSON(text);
   var html = compileToHTML(json);
   var result = [].concat.apply([], html);
-  if (doLinkify) linkifyResult(result);
+  if (doLinkify) return linkifyResult(result);
   return result;
 });
 var typeMarkdown = {
-  bold: "*",
-  italic: "_",
-  strike: "~",
-  underline: "°"
+  bold: '*',
+  italic: '_',
+  strike: '~',
+  underline: '°'
 };
 var pseudoMarkdown = (_pseudoMarkdown = {}, _defineProperty(_pseudoMarkdown, typeMarkdown.bold, {
-  end: "\\" + [typeMarkdown.bold],
-  allowed_chars: ".",
-  type: "bold"
+  end: '\\' + [typeMarkdown.bold],
+  allowed_chars: '.',
+  type: 'bold'
 }), _defineProperty(_pseudoMarkdown, typeMarkdown.italic, {
   end: [typeMarkdown.italic],
-  allowed_chars: ".",
-  type: "italic"
+  allowed_chars: '.',
+  type: 'italic'
 }), _defineProperty(_pseudoMarkdown, typeMarkdown.strike, {
   end: [typeMarkdown.strike],
-  allowed_chars: ".",
-  type: "strike"
+  allowed_chars: '.',
+  type: 'strike'
 }), _defineProperty(_pseudoMarkdown, typeMarkdown.underline, {
   end: [typeMarkdown.underline],
-  allowed_chars: ".",
-  type: "underline"
-}), _defineProperty(_pseudoMarkdown, "```", {
-  end: "```",
-  allowed_chars: "(.|\n)",
-  type: "multiline-code"
-}), _defineProperty(_pseudoMarkdown, "`", {
-  end: "`",
-  allowed_chars: ".",
-  type: "inline-code"
-}), _defineProperty(_pseudoMarkdown, "<usertag>", {
-  allowed_chars: ".",
-  end: "</usertag>",
-  type: "tag"
+  allowed_chars: '.',
+  type: 'underline'
 }), _pseudoMarkdown);
 
 function compileToJSON(str) {
@@ -13694,7 +13686,7 @@ function compileToJSON(str) {
     var strLeft = str.substr(0, minIndexOf);
     var strLink = str.substr(minIndexOf, links[0].value.length);
     var strRight = str.substr(minIndexOf + links[0].value.length);
-    result.push(strLeft);
+    if (strLeft.length) result.push(strLeft);
     result.push(strLink);
     result = result.concat(compileToJSON(strRight));
     return result;
@@ -13707,11 +13699,11 @@ function compileToJSON(str) {
 
     var _strRight = str.substr(minIndexOf + _char.length);
 
-    if (str.replace(/\s/g, "").length === _char.length * 2) {
+    if (str.replace(/\s/g, '').length === _char.length * 2) {
       return [str];
     }
 
-    var match = _strRight.match(new RegExp("^(" + (pseudoMarkdown[_char].allowed_chars || ".") + "*" + (pseudoMarkdown[_char].end ? "?" : "") + ")" + (pseudoMarkdown[_char].end ? "(" + pseudoMarkdown[_char].end + ")" : ""), "m"));
+    var match = _strRight.match(new RegExp('^(' + (pseudoMarkdown[_char].allowed_chars || '.') + '*' + (pseudoMarkdown[_char].end ? '?' : '') + ')' + (pseudoMarkdown[_char].end ? '(' + pseudoMarkdown[_char].end + ')' : ''), 'm'));
 
     if (!match || !match[1]) {
       _strLeft = _strLeft + _char;
@@ -13745,7 +13737,7 @@ function compileToJSON(str) {
 function compileToHTML(json) {
   var result = [];
   json.forEach(function (item) {
-    if (typeof item === "string") {
+    if (typeof item === 'string') {
       result.push({
         types: [],
         value: item
@@ -13762,14 +13754,14 @@ function compileToHTML(json) {
 function parseContent(item) {
   var result = [];
   item.content.forEach(function (it) {
-    if (typeof it === "string") {
+    if (typeof it === 'string') {
       result.push({
         types: [item.type],
         value: it
       });
     } else {
       it.content.forEach(function (i) {
-        if (typeof i === "string") {
+        if (typeof i === 'string') {
           result.push({
             types: [it.type].concat([item.type]),
             value: i
@@ -13788,18 +13780,32 @@ function parseContent(item) {
 
 function linkifyResult(array) {
   var result = [];
+  var regVal = new RegExp('.*\\[(.+)\\]$');
   array.forEach(function (arr) {
     var links = linkify.find(arr.value);
 
     if (links.length) {
-      var spaces = arr.value.replace(links[0].value, "");
-      result.push({
+      var spaces = arr.value.replace(links[0].value, '');
+      if (spaces.length) result.push({
         types: arr.types,
         value: spaces
       });
-      arr.types = ["url"].concat(arr.types);
+      arr.types = ['url'].concat(arr.types);
       arr.href = links[0].href;
       arr.value = links[0].value;
+
+      if (result.length) {
+        var prev = result[result.length - 1];
+
+        if (!prev.types.length) {
+          var match = prev.value.match(regVal);
+
+          if (match) {
+            arr.value = match[1].trim();
+            prev.value = prev.value.substr(0, prev.value.length - match[1].length - 2);
+          }
+        }
+      }
     }
 
     result.push(arr);
@@ -14846,9 +14852,6 @@ function _toConsumableArray(arr) {
 }
 // EXTERNAL MODULE: ./node_modules/regenerator-runtime/runtime.js
 var runtime = __webpack_require__("96cf");
-
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.trim.js
-var es_string_trim = __webpack_require__("498a");
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.date.to-iso-string.js
 var es_date_to_iso_string = __webpack_require__("accc");
