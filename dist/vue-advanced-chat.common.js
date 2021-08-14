@@ -13672,7 +13672,7 @@ function compileToJSON(str) {
     }
   });
 
-  if (minIndexFromLink && minIndexOfKey !== -1) {
+  if (minIndexFromLink) {
     var strLeft = str.substr(0, minIndexOf);
     var strLink = str.substr(minIndexOf, links[0].value.length);
     var strRight = str.substr(minIndexOf + links[0].value.length);

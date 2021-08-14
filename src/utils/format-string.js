@@ -80,7 +80,7 @@ function compileToJSON(str) {
 		}
 	})
 
-	if (minIndexFromLink && minIndexOfKey !== -1) {
+	if (minIndexFromLink) {
 		let strLeft = str.substr(0, minIndexOf)
 		let strLink = str.substr(minIndexOf, links[0].value.length)
 		let strRight = str.substr(minIndexOf + links[0].value.length)
