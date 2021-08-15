@@ -17,7 +17,8 @@ const typeMarkdown = {
 	bold: '*',
 	italic: '_',
 	strike: '~',
-	underline: '°'
+	underline: '°',
+	noformat: '|'
 }
 
 const pseudoMarkdown = {
@@ -40,6 +41,11 @@ const pseudoMarkdown = {
 		end: [typeMarkdown.underline],
 		allowed_chars: '.',
 		type: 'underline'
+	},
+	[typeMarkdown.noformat]: {
+		end: '\\' + [typeMarkdown.noformat],
+		allowed_chars: '.',
+		type: 'noformat'
 	}
 	// '```': {
 	// 	end: '```',
@@ -119,11 +125,20 @@ function compileToJSON(str) {
 			if (strLeft.length) {
 				result.push(strLeft)
 			}
+
+			const type = pseudoMarkdown[char].type
+			var content
+			if (type === 'noformat') {
+				content = [match[1]]
+			} else {
+				content = compileToJSON(match[1])
+			}
+
 			const object = {
 				start: char,
-				content: compileToJSON(match[1]),
+				content: content,
 				end: match[2],
-				type: pseudoMarkdown[char].type
+				type: type
 			}
 			result.push(object)
 			strRight = strRight.substr(match[0].length)

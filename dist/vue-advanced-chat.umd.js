@@ -13640,7 +13640,8 @@ var typeMarkdown = {
   bold: '*',
   italic: '_',
   strike: '~',
-  underline: '°'
+  underline: '°',
+  noformat: '|'
 };
 var pseudoMarkdown = (_pseudoMarkdown = {}, _defineProperty(_pseudoMarkdown, typeMarkdown.bold, {
   end: '\\' + [typeMarkdown.bold],
@@ -13658,6 +13659,10 @@ var pseudoMarkdown = (_pseudoMarkdown = {}, _defineProperty(_pseudoMarkdown, typ
   end: [typeMarkdown.underline],
   allowed_chars: '.',
   type: 'underline'
+}), _defineProperty(_pseudoMarkdown, typeMarkdown.noformat, {
+  end: '\\' + [typeMarkdown.noformat],
+  allowed_chars: '.',
+  type: 'noformat'
 }), _pseudoMarkdown);
 
 function compileToJSON(str) {
@@ -13713,11 +13718,20 @@ function compileToJSON(str) {
         result.push(_strLeft);
       }
 
+      var type = pseudoMarkdown[_char].type;
+      var content;
+
+      if (type === 'noformat') {
+        content = [match[1]];
+      } else {
+        content = compileToJSON(match[1]);
+      }
+
       var object = {
         start: _char,
-        content: compileToJSON(match[1]),
+        content: content,
         end: match[2],
-        type: pseudoMarkdown[_char].type
+        type: type
       };
       result.push(object);
       _strRight = _strRight.substr(match[0].length);
