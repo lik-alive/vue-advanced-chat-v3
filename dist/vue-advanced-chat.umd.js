@@ -13667,7 +13667,7 @@ function compileToJSON(str) {
   var links = linkify.find(str);
   var minIndexFromLink = false;
 
-  if (links.length > 0) {
+  if (links.length) {
     minIndexOf = str.indexOf(links[0].value);
     minIndexFromLink = true;
   }
@@ -13709,7 +13709,7 @@ function compileToJSON(str) {
       _strLeft = _strLeft + _char;
       result.push(_strLeft);
     } else {
-      if (_strLeft) {
+      if (_strLeft.length) {
         result.push(_strLeft);
       }
 
@@ -13726,7 +13726,7 @@ function compileToJSON(str) {
     result = result.concat(compileToJSON(_strRight));
     return result;
   } else {
-    if (str) {
+    if (str.length) {
       return [str];
     } else {
       return [];
@@ -13760,18 +13760,12 @@ function parseContent(item) {
         value: it
       });
     } else {
-      it.content.forEach(function (i) {
-        if (typeof i === 'string') {
-          result.push({
-            types: [it.type].concat([item.type]),
-            value: i
-          });
-        } else {
-          result.push({
-            types: [i.type].concat([it.type]).concat([item.type]),
-            value: parseContent(i)
-          });
-        }
+      var subres = parseContent(it);
+      subres.forEach(function (sr) {
+        result.push({
+          types: [item.type].concat(sr.types),
+          value: sr.value
+        });
       });
     }
   });
@@ -13796,14 +13790,11 @@ function linkifyResult(array) {
 
       if (result.length) {
         var prev = result[result.length - 1];
+        var match = prev.value.match(regVal);
 
-        if (!prev.types.length) {
-          var match = prev.value.match(regVal);
-
-          if (match) {
-            arr.value = match[1].trim();
-            prev.value = prev.value.substr(0, prev.value.length - match[1].length - 2);
-          }
+        if (match) {
+          arr.value = match[1].trim();
+          prev.value = prev.value.substr(0, prev.value.length - match[1].length - 2);
         }
       }
     }
