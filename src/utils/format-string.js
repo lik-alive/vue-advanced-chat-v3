@@ -66,7 +66,7 @@ function compileToJSON(str) {
 	let links = linkify.find(str)
 	let minIndexFromLink = false
 
-	if (links.length > 0) {
+	if (links.length) {
 		minIndexOf = str.indexOf(links[0].value)
 		minIndexFromLink = true
 	}
@@ -116,7 +116,7 @@ function compileToJSON(str) {
 			strLeft = strLeft + char
 			result.push(strLeft)
 		} else {
-			if (strLeft) {
+			if (strLeft.length) {
 				result.push(strLeft)
 			}
 			const object = {
@@ -131,7 +131,7 @@ function compileToJSON(str) {
 		result = result.concat(compileToJSON(strRight))
 		return result
 	} else {
-		if (str) {
+		if (str.length) {
 			return [str]
 		} else {
 			return []
@@ -165,18 +165,12 @@ function parseContent(item) {
 				value: it
 			})
 		} else {
-			it.content.forEach(i => {
-				if (typeof i === 'string') {
-					result.push({
-						types: [it.type].concat([item.type]),
-						value: i
-					})
-				} else {
-					result.push({
-						types: [i.type].concat([it.type]).concat([item.type]),
-						value: parseContent(i)
-					})
-				}
+			const subres = parseContent(it)
+			subres.forEach(sr => {
+				result.push({
+					types: [item.type].concat(sr.types),
+					value: sr.value
+				})
 			})
 		}
 	})
@@ -201,15 +195,13 @@ function linkifyResult(array) {
 
 			if (result.length) {
 				const prev = result[result.length - 1]
-				if (!prev.types.length) {
-					const match = prev.value.match(regVal)
-					if (match) {
-						arr.value = match[1].trim()
-						prev.value = prev.value.substr(
-							0,
-							prev.value.length - match[1].length - 2
-						)
-					}
+				const match = prev.value.match(regVal)
+				if (match) {
+					arr.value = match[1].trim()
+					prev.value = prev.value.substr(
+						0,
+						prev.value.length - match[1].length - 2
+					)
 				}
 			}
 		}
