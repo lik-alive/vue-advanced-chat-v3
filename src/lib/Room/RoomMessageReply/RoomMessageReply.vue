@@ -43,29 +43,29 @@
 </template>
 
 <script>
-import SvgIcon from "../../../components/SvgIcon/SvgIcon";
-import FormatMessage from "../../../components/FormatMessage/FormatMessage";
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
+import FormatMessage from '../../../components/FormatMessage/FormatMessage'
 
-const { isImageFile } = require("../../../utils/media-file");
+const { isImageFile } = require('../../../utils/media-file')
 
 export default {
-  name: "RoomMessageReply",
+  name: 'RoomMessageReply',
   components: {
     SvgIcon,
-    FormatMessage,
+    FormatMessage
   },
 
   props: {
     room: { type: Object, required: true },
     messageReply: { type: Object, default: null },
     textFormatting: { type: Boolean, required: true },
-    linkOptions: { type: Object, required: true },
+    linkOptions: { type: Object, required: true }
   },
 
   computed: {
     isImageFile() {
-      return isImageFile(this.messageReply.file);
-    },
-  },
-};
+      return isImageFile(this.messageReply.file)
+    }
+  }
+}
 </script>

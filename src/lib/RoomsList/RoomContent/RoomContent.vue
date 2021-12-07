@@ -113,21 +113,21 @@
 </template>
 
 <script>
-import vClickOutside from "click-outside-vue3";
-import SvgIcon from "../../../components/SvgIcon/SvgIcon";
-import FormatMessage from "../../../components/FormatMessage/FormatMessage";
+import vClickOutside from 'click-outside-vue3'
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
+import FormatMessage from '../../../components/FormatMessage/FormatMessage'
 
-import typingText from "../../../utils/typing-text";
-const { isAudioFile } = require("../../../utils/media-file");
+import typingText from '../../../utils/typing-text'
+const { isAudioFile } = require('../../../utils/media-file')
 
 export default {
-  name: "RoomsContent",
+  name: 'RoomsContent',
   directives: {
-    clickOutside: vClickOutside.directive,
+    clickOutside: vClickOutside.directive
   },
   components: {
     SvgIcon,
-    FormatMessage,
+    FormatMessage
   },
 
   props: {
@@ -136,50 +136,50 @@ export default {
     textFormatting: { type: Boolean, required: true },
     linkOptions: { type: Object, required: true },
     textMessages: { type: Object, required: true },
-    roomActions: { type: Array, required: true },
+    roomActions: { type: Array, required: true }
   },
 
   data() {
     return {
-      roomMenuOpened: null,
-    };
+      roomMenuOpened: null
+    }
   },
 
   computed: {
     getLastMessage() {
-      const isTyping = this.typingUsers;
-      if (isTyping) return isTyping;
+      const isTyping = this.typingUsers
+      if (isTyping) return isTyping
 
       const content = this.room.lastMessage.deleted
         ? this.textMessages.MESSAGE_DELETED
-        : this.room.lastMessage.content;
+        : this.room.lastMessage.content
 
       if (this.room.users.length <= 2) {
-        return content;
+        return content
       }
 
       const user = this.room.users.find(
         (user) => user._id === this.room.lastMessage.senderId
-      );
+      )
 
       if (this.room.lastMessage.username) {
-        return `${this.room.lastMessage.username} - ${content}`;
+        return `${this.room.lastMessage.username} - ${content}`
       } else if (!user || user._id === this.currentUserId) {
-        return content;
+        return content
       }
 
-      return `${user.username} - ${content}`;
+      return `${user.username} - ${content}`
     },
     userStatus() {
-      if (!this.room.users || this.room.users.length !== 2) return;
+      if (!this.room.users || this.room.users.length !== 2) return
 
-      const user = this.room.users.find((u) => u._id !== this.currentUserId);
-      if (user && user.status) return user.status.state;
+      const user = this.room.users.find((u) => u._id !== this.currentUserId)
+      if (user && user.status) return user.status.state
 
-      return null;
+      return null
     },
     typingUsers() {
-      return typingText(this.room, this.currentUserId, this.textMessages);
+      return typingText(this.room, this.currentUserId, this.textMessages)
     },
     isMessageCheckmarkVisible() {
       return (
@@ -190,31 +190,31 @@ export default {
         (this.room.lastMessage.saved ||
           this.room.lastMessage.distributed ||
           this.room.lastMessage.seen)
-      );
+      )
     },
     formattedDuration() {
-      const file = this.room.lastMessage.file;
+      const file = this.room.lastMessage.file
 
       if (!file.duration) {
-        return `${file.name}.${file.extension}`;
+        return `${file.name}.${file.extension}`
       }
 
-      let s = Math.floor(file.duration);
-      return (s - (s %= 60)) / 60 + (s > 9 ? ":" : ":0") + s;
+      let s = Math.floor(file.duration)
+      return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
     },
     isAudio() {
-      return isAudioFile(this.room.lastMessage.file);
-    },
+      return isAudioFile(this.room.lastMessage.file)
+    }
   },
 
   methods: {
     roomActionHandler(action) {
-      this.closeRoomMenu();
-      this.$emit("room-action-handler", { action, roomId: this.room.roomId });
+      this.closeRoomMenu()
+      this.$emit('room-action-handler', { action, roomId: this.room.roomId })
     },
     closeRoomMenu() {
-      this.roomMenuOpened = null;
-    },
-  },
-};
+      this.roomMenuOpened = null
+    }
+  }
+}
 </script>

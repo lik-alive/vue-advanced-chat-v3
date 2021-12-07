@@ -22,53 +22,53 @@
 <script>
 export default {
   props: {
-    percentage: { type: Number, default: 0 },
+    percentage: { type: Number, default: 0 }
   },
 
   data() {
     return {
-      isMouseDown: false,
-    };
+      isMouseDown: false
+    }
   },
 
   methods: {
     onMouseDown(ev) {
-      this.isMouseDown = true;
+      this.isMouseDown = true
       const seekPos = this.calculateLineHeadPosition(
         ev,
-        this.$refs["progress"]
-      );
-      this.$emit("change-linehead", seekPos);
-      document.addEventListener("mousemove", this.onMouseMove);
-      document.addEventListener("mouseup", this.onMouseUp);
+        this.$refs['progress']
+      )
+      this.$emit('change-linehead', seekPos)
+      document.addEventListener('mousemove', this.onMouseMove)
+      document.addEventListener('mouseup', this.onMouseUp)
     },
     onMouseUp(ev) {
-      this.isMouseDown = false;
-      document.removeEventListener("mouseup", this.onMouseUp);
-      document.removeEventListener("mousemove", this.onMouseMove);
+      this.isMouseDown = false
+      document.removeEventListener('mouseup', this.onMouseUp)
+      document.removeEventListener('mousemove', this.onMouseMove)
       const seekPos = this.calculateLineHeadPosition(
         ev,
-        this.$refs["progress"]
-      );
-      this.$emit("change-linehead", seekPos);
+        this.$refs['progress']
+      )
+      this.$emit('change-linehead', seekPos)
     },
     onMouseMove(ev) {
       const seekPos = this.calculateLineHeadPosition(
         ev,
-        this.$refs["progress"]
-      );
-      this.$emit("change-linehead", seekPos);
+        this.$refs['progress']
+      )
+      this.$emit('change-linehead', seekPos)
     },
     calculateLineHeadPosition(ev, element) {
-      const progressWidth = element.getBoundingClientRect().width;
-      const leftPosition = element.getBoundingClientRect().left;
-      let pos = (ev.clientX - leftPosition) / progressWidth;
+      const progressWidth = element.getBoundingClientRect().width
+      const leftPosition = element.getBoundingClientRect().left
+      let pos = (ev.clientX - leftPosition) / progressWidth
 
-      pos = pos < 0 ? 0 : pos;
-      pos = pos > 1 ? 1 : pos;
+      pos = pos < 0 ? 0 : pos
+      pos = pos > 1 ? 1 : pos
 
-      return pos;
-    },
-  },
-};
+      return pos
+    }
+  }
+}
 </script>

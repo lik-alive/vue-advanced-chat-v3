@@ -76,8 +76,8 @@
     </div>
 
     <div
-      class="vac-image-preview"
       v-if="imagePreview"
+      class="vac-image-preview"
       @click="imagePreview = false"
     >
       <div
@@ -85,37 +85,37 @@
         :style="{
           'background-image': `url('${imagePreviewUrl}')`,
         }"
-      ></div>
+      />
     </div>
   </div>
 </template>
 
 <script>
-import RoomsList from "./RoomsList/RoomsList";
-import Room from "./Room/Room";
+import RoomsList from './RoomsList/RoomsList'
+import Room from './Room/Room'
 
-import locales from "../locales";
-import { defaultThemeStyles, cssThemeVars } from "../themes";
+import locales from '../locales'
+import { defaultThemeStyles, cssThemeVars } from '../themes'
 const {
   roomsValidation,
-  partcipantsValidation,
-} = require("../utils/data-validation");
+  partcipantsValidation
+} = require('../utils/data-validation')
 
 export default {
-  name: "ChatContainer",
+  name: 'ChatContainer',
   components: {
     RoomsList,
-    Room,
+    Room
   },
 
   props: {
-    height: { type: String, default: "600px" },
-    theme: { type: String, default: "light" },
+    height: { type: String, default: '600px' },
+    theme: { type: String, default: 'light' },
     styles: { type: Object, default: () => ({}) },
     responsiveBreakpoint: { type: Number, default: 900 },
     singleRoom: { type: Boolean, default: false },
     textMessages: { type: Object, default: null },
-    currentUserId: { type: [String, Number], default: "" },
+    currentUserId: { type: [String, Number], default: '' },
     rooms: { type: Array, default: () => [] },
     loadingRooms: { type: Boolean, default: false },
     roomsLoaded: { type: Boolean, default: false },
@@ -128,10 +128,10 @@ export default {
     messageActions: {
       type: Array,
       default: () => [
-        { name: "replyMessage", title: "Reply" },
-        { name: "editMessage", title: "Edit Message", onlyMe: true },
-        { name: "deleteMessage", title: "Delete Message", onlyMe: true },
-      ],
+        { name: 'replyMessage', title: 'Reply' },
+        { name: 'editMessage', title: 'Edit Message', onlyMe: true },
+        { name: 'deleteMessage', title: 'Delete Message', onlyMe: true }
+      ]
     },
     showSearch: { type: Boolean, default: true },
     showAddRoom: { type: Boolean, default: true },
@@ -145,11 +145,11 @@ export default {
     textFormatting: { type: Boolean, default: true },
     linkOptions: {
       type: Object,
-      default: () => ({ disabled: false, target: "_blank" }),
+      default: () => ({ disabled: false, target: '_blank' })
     },
-    roomMessage: { type: String, default: "" },
-    acceptedFiles: { type: String, default: "*" },
-    forceUsername: { type: Boolean, default: false },
+    roomMessage: { type: String, default: '' },
+    acceptedFiles: { type: String, default: '*' },
+    forceUsername: { type: Boolean, default: false }
   },
 
   data() {
@@ -159,38 +159,38 @@ export default {
       showRoomsList: true,
       isMobile: false,
       imagePreview: false,
-      imagePreview: null,
-    };
+      imagePreview: null
+    }
   },
 
   computed: {
     t() {
       return {
         ...locales,
-        ...this.textMessages,
-      };
+        ...this.textMessages
+      }
     },
     cssVars() {
-      const defaultStyles = defaultThemeStyles[this.theme];
-      const customStyles = {};
+      const defaultStyles = defaultThemeStyles[this.theme]
+      const customStyles = {}
 
       Object.keys(defaultStyles).map((key) => {
         customStyles[key] = {
           ...defaultStyles[key],
-          ...(this.styles[key] || {}),
-        };
-      });
+          ...(this.styles[key] || {})
+        }
+      })
 
-      return cssThemeVars(customStyles);
+      return cssThemeVars(customStyles)
     },
     orderedRooms() {
       return this.rooms.slice().sort((a, b) => {
-        const aVal = a.index || 0;
-        const bVal = b.index || 0;
+        const aVal = a.index || 0
+        const bVal = b.index || 0
 
-        return aVal > bVal ? -1 : bVal > aVal ? 1 : 0;
-      });
-    },
+        return aVal > bVal ? -1 : bVal > aVal ? 1 : 0
+      })
+    }
   },
 
   watch: {
@@ -201,7 +201,7 @@ export default {
           !newVal[0] ||
           !newVal.find((room) => room.roomId === this.room.roomId)
         ) {
-          this.showRoomsList = true;
+          this.showRoomsList = true
         }
 
         if (
@@ -211,135 +211,135 @@ export default {
           (!oldVal || newVal.length !== oldVal.length)
         ) {
           if (this.roomId) {
-            const room = newVal.find((r) => r.roomId === this.roomId) || {};
-            this.fetchRoom({ room });
+            const room = newVal.find((r) => r.roomId === this.roomId) || {}
+            this.fetchRoom({ room })
           } else if (!this.isMobile || this.singleRoom) {
-            this.fetchRoom({ room: this.orderedRooms[0] });
+            this.fetchRoom({ room: this.orderedRooms[0] })
           } else {
-            this.showRoomsList = true;
+            this.showRoomsList = true
           }
         }
-      },
+      }
     },
 
     loadingRooms(val) {
-      if (val) this.room = {};
+      if (val) this.room = {}
     },
 
     roomId: {
       immediate: true,
       handler(newVal, oldVal) {
         if (newVal && !this.loadingRooms && this.rooms.length) {
-          const room = this.rooms.find((r) => r.roomId === newVal);
-          this.fetchRoom({ room });
+          const room = this.rooms.find((r) => r.roomId === newVal)
+          this.fetchRoom({ room })
         } else if (oldVal && !newVal) {
-          this.room = {};
+          this.room = {}
         }
-      },
+      }
     },
 
     room(val) {
-      if (!val || Object.entries(val).length === 0) return;
+      if (!val || Object.entries(val).length === 0) return
 
-      roomsValidation(val);
+      roomsValidation(val)
 
       val.users.forEach((user) => {
-        partcipantsValidation(user);
-      });
-    },
+        partcipantsValidation(user)
+      })
+    }
   },
 
   created() {
-    this.updateResponsive();
-    window.addEventListener("resize", (ev) => {
-      if (ev.isTrusted) this.updateResponsive();
-    });
+    this.updateResponsive()
+    window.addEventListener('resize', (ev) => {
+      if (ev.isTrusted) this.updateResponsive()
+    })
   },
 
   methods: {
     updateResponsive() {
-      this.isMobile = window.innerWidth < this.responsiveBreakpoint;
+      this.isMobile = window.innerWidth < this.responsiveBreakpoint
     },
     toggleRoomsList() {
-      this.showRoomsList = !this.showRoomsList;
-      if (this.isMobile) this.room = {};
-      this.$emit("toggle-rooms-list", { opened: this.showRoomsList });
+      this.showRoomsList = !this.showRoomsList
+      if (this.isMobile) this.room = {}
+      this.$emit('toggle-rooms-list', { opened: this.showRoomsList })
     },
     fetchRoom({ room }) {
-      this.room = room;
-      this.fetchMessages({ reset: true });
-      if (this.isMobile) this.showRoomsList = false;
+      this.room = room
+      this.fetchMessages({ reset: true })
+      if (this.isMobile) this.showRoomsList = false
     },
     fetchMoreRooms() {
-      this.$emit("fetch-more-rooms");
+      this.$emit('fetch-more-rooms')
     },
     roomInfo() {
-      this.$emit("room-info", this.room);
+      this.$emit('room-info', this.room)
     },
     addRoom() {
-      this.$emit("add-room");
+      this.$emit('add-room')
     },
     fetchMessages(options) {
-      this.$emit("fetch-messages", { room: this.room, options });
+      this.$emit('fetch-messages', { room: this.room, options })
     },
     sendMessage(message) {
-      this.$emit("send-message", { ...message, roomId: this.room.roomId });
+      this.$emit('send-message', { ...message, roomId: this.room.roomId })
     },
     editMessage(message) {
-      this.$emit("edit-message", { ...message, roomId: this.room.roomId });
+      this.$emit('edit-message', { ...message, roomId: this.room.roomId })
     },
     deleteMessage(message) {
-      this.$emit("delete-message", { message, roomId: this.room.roomId });
+      this.$emit('delete-message', { message, roomId: this.room.roomId })
     },
     openFile({ message, action }) {
-      if (action === "preview") {
-        this.imagePreview = true;
-        this.imagePreviewUrl = message.file.url;
+      if (action === 'preview') {
+        this.imagePreview = true
+        this.imagePreviewUrl = message.file.url
       } else {
-        this.$emit("open-file", { message, action });
+        this.$emit('open-file', { message, action })
       }
     },
     openUserTag({ user }) {
-      this.$emit("open-user-tag", { user });
+      this.$emit('open-user-tag', { user })
     },
     menuActionHandler(ev) {
-      this.$emit("menu-action-handler", {
+      this.$emit('menu-action-handler', {
         action: ev,
-        roomId: this.room.roomId,
-      });
+        roomId: this.room.roomId
+      })
     },
     roomActionHandler({ action, roomId }) {
-      this.$emit("room-action-handler", {
+      this.$emit('room-action-handler', {
         action,
-        roomId,
-      });
+        roomId
+      })
     },
     messageActionHandler(ev) {
-      this.$emit("message-action-handler", {
+      this.$emit('message-action-handler', {
         ...ev,
-        roomId: this.room.roomId,
-      });
+        roomId: this.room.roomId
+      })
     },
     sendMessageReaction(messageReaction) {
-      this.$emit("send-message-reaction", {
+      this.$emit('send-message-reaction', {
         ...messageReaction,
-        roomId: this.room.roomId,
-      });
+        roomId: this.room.roomId
+      })
     },
     typingMessage(message) {
-      this.$emit("typing-message", {
+      this.$emit('typing-message', {
         message,
-        roomId: this.room.roomId,
-      });
+        roomId: this.room.roomId
+      })
     },
     textareaActionHandler(message) {
-      this.$emit("textarea-action-handler", {
+      this.$emit('textarea-action-handler', {
         message,
-        roomId: this.room.roomId,
-      });
-    },
-  },
-};
+        roomId: this.room.roomId
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss">

@@ -218,24 +218,24 @@
 </template>
 
 <script>
-import SvgIcon from "../../components/SvgIcon/SvgIcon";
-import FormatMessage from "../../components/FormatMessage/FormatMessage";
+import SvgIcon from '../../components/SvgIcon/SvgIcon'
+import FormatMessage from '../../components/FormatMessage/FormatMessage'
 
-import MessageReply from "./MessageReply/MessageReply";
-import MessageImage from "./MessageImage/MessageImage";
-import MessageActions from "./MessageActions/MessageActions";
-import MessageReactions from "./MessageReactions/MessageReactions";
-import AudioPlayer from "./AudioPlayer/AudioPlayer";
+import MessageReply from './MessageReply/MessageReply'
+import MessageImage from './MessageImage/MessageImage'
+import MessageActions from './MessageActions/MessageActions'
+import MessageReactions from './MessageReactions/MessageReactions'
+import AudioPlayer from './AudioPlayer/AudioPlayer'
 
-const { messagesValidation } = require("../../utils/data-validation");
+const { messagesValidation } = require('../../utils/data-validation')
 const {
   isImageFile,
   isVideoFile,
-  isAudioFile,
-} = require("../../utils/media-file");
+  isAudioFile
+} = require('../../utils/media-file')
 
 export default {
-  name: "Message",
+  name: 'Message',
   components: {
     SvgIcon,
     FormatMessage,
@@ -243,7 +243,7 @@ export default {
     MessageReply,
     MessageImage,
     MessageActions,
-    MessageReactions,
+    MessageReactions
   },
 
   props: {
@@ -264,7 +264,7 @@ export default {
     emojisList: { type: Object, required: true },
     hideOptions: { type: Boolean, required: true },
     forceUsername: { type: Boolean, default: false },
-    roomReadonly: { type: Boolean, default: false },
+    roomReadonly: { type: Boolean, default: false }
   },
 
   data() {
@@ -275,63 +275,63 @@ export default {
       optionsOpened: false,
       emojiOpened: false,
       newMessage: {},
-      progressTime: "- : -",
-      hoverAudioProgress: false,
-    };
+      progressTime: '- : -',
+      hoverAudioProgress: false
+    }
   },
 
   computed: {
     fileSize() {
-      let size = this.message.file.size;
-      let count = 0;
+      let size = this.message.file.size
+      let count = 0
       while (size >= 1024 && count < 2) {
-        size /= 1024;
-        count++;
+        size /= 1024
+        count++
       }
 
       switch (count) {
         case 0:
-          return `${size.toFixed(2)} B`;
+          return `${size.toFixed(2)} B`
         case 1:
-          return `${size.toFixed(2)} KB`;
+          return `${size.toFixed(2)} KB`
         default:
-          return `${size.toFixed(2)} MB`;
+          return `${size.toFixed(2)} MB`
       }
     },
     showDate() {
       return (
         this.index > 0 &&
         this.message.date !== this.messages[this.index - 1].date
-      );
+      )
     },
     messageOffset() {
       return (
         this.index > 0 &&
         this.message.senderId !== this.messages[this.index - 1].senderId
-      );
+      )
     },
     isMessageHover() {
       return (
         this.editedMessage._id === this.message._id ||
         this.hoverMessageId === this.message._id
-      );
+      )
     },
     isImage() {
-      return isImageFile(this.message.file);
+      return isImageFile(this.message.file)
     },
     isVideo() {
-      return isVideoFile(this.message.file);
+      return isVideoFile(this.message.file)
     },
     isAudio() {
-      return isAudioFile(this.message.file);
+      return isAudioFile(this.message.file)
     },
     isCheckmarkVisible() {
       return (
         this.message.senderId === this.currentUserId &&
         !this.message.deleted &&
         (this.message.saved || this.message.distributed || this.message.seen)
-      );
-    },
+      )
+    }
   },
 
   watch: {
@@ -339,62 +339,62 @@ export default {
       immediate: true,
       handler(val) {
         if (!val.length || !this.showNewMessagesDivider) {
-          return (this.newMessage = {});
+          return (this.newMessage = {})
         }
 
         this.newMessage = val.reduce((res, obj) =>
           obj.index < res.index ? obj : res
-        );
-      },
-    },
+        )
+      }
+    }
   },
 
   mounted() {
-    messagesValidation(this.message);
+    messagesValidation(this.message)
 
-    this.$emit("message-added", {
+    this.$emit('message-added', {
       message: this.message,
       index: this.index,
-      ref: this.$refs["msg" + this.message._id],
-    });
+      ref: this.$refs['msg' + this.message._id]
+    })
   },
 
   methods: {
     onHoverMessage() {
-      this.imageHover = true;
-      this.messageHover = true;
-      if (this.canEditMessage()) this.hoverMessageId = this.message._id;
+      this.imageHover = true
+      this.messageHover = true
+      if (this.canEditMessage()) this.hoverMessageId = this.message._id
     },
     canEditMessage() {
-      return !this.message.deleted;
+      return !this.message.deleted
     },
     onLeaveMessage() {
-      this.imageHover = false;
-      if (!this.optionsOpened && !this.emojiOpened) this.messageHover = false;
-      this.hoverMessageId = null;
+      this.imageHover = false
+      if (!this.optionsOpened && !this.emojiOpened) this.messageHover = false
+      this.hoverMessageId = null
     },
     openFile(action) {
-      this.$emit("open-file", { message: this.message, action });
+      this.$emit('open-file', { message: this.message, action })
     },
     openUserTag(user) {
-      this.$emit("open-user-tag", { user });
+      this.$emit('open-user-tag', { user })
     },
     messageActionHandler(action) {
-      this.messageHover = false;
-      this.hoverMessageId = null;
+      this.messageHover = false
+      this.hoverMessageId = null
 
       setTimeout(() => {
-        this.$emit("message-action-handler", { action, message: this.message });
-      }, 300);
+        this.$emit('message-action-handler', { action, message: this.message })
+      }, 300)
     },
     sendMessageReaction({ emoji, reaction }) {
-      this.$emit("send-message-reaction", {
+      this.$emit('send-message-reaction', {
         messageId: this.message._id,
         reaction: emoji,
-        remove: reaction && reaction.indexOf(this.currentUserId) !== -1,
-      });
-      this.messageHover = false;
-    },
-  },
-};
+        remove: reaction && reaction.indexOf(this.currentUserId) !== -1
+      })
+      this.messageHover = false
+    }
+  }
+}
 </script>

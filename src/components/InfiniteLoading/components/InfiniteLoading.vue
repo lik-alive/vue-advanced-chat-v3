@@ -56,39 +56,39 @@
   </div>
 </template>
 <script>
-import config, { evt3rdArg, WARNINGS, STATUS, SLOT_STYLES } from "../config";
+import config, { evt3rdArg, WARNINGS, STATUS, SLOT_STYLES } from '../config'
 import {
   warn,
   throttleer,
   loopTracker,
   scrollBarStorage,
   kebabCase,
-  isVisible,
-} from "../utils";
+  isVisible
+} from '../utils'
 
 export default {
-  name: "InfiniteLoading",
+  name: 'InfiniteLoading',
   props: {
     distance: {
       type: Number,
-      default: config.props.distance,
+      default: config.props.distance
     },
     direction: {
       type: String,
-      default: "bottom",
+      default: 'bottom'
     },
     forceUseInfiniteWrapper: {
       type: [Boolean, String],
-      default: config.props.forceUseInfiniteWrapper,
+      default: config.props.forceUseInfiniteWrapper
     },
     identifier: {
       type: Number,
-      default: +new Date(),
+      default: +new Date()
     },
     webComponentName: {
       type: [String],
-      default: "",
-    },
+      default: ''
+    }
   },
   data() {
     return {
@@ -96,27 +96,27 @@ export default {
       scrollHandler: null,
       isFirstLoad: true, // save the current loading whether it is the first loading
       status: STATUS.READY,
-      slots: config.slots,
-    };
+      slots: config.slots
+    }
   },
   computed: {
     isShowSpinner() {
-      return this.status === STATUS.LOADING;
+      return this.status === STATUS.LOADING
     },
     isShowError() {
-      return this.status === STATUS.ERROR;
+      return this.status === STATUS.ERROR
     },
     isShowNoResults() {
-      return this.status === STATUS.COMPLETE && this.isFirstLoad;
+      return this.status === STATUS.COMPLETE && this.isFirstLoad
     },
     isShowNoMore() {
-      return this.status === STATUS.COMPLETE && !this.isFirstLoad;
+      return this.status === STATUS.COMPLETE && !this.isFirstLoad
     },
     slotStyles() {
-      const styles = {};
+      const styles = {}
 
       Object.keys(config.slots).forEach((key) => {
-        const name = kebabCase(key);
+        const name = kebabCase(key)
 
         if (
           // no slot and the configured default slot is not a Vue component
@@ -125,64 +125,64 @@ export default {
           (this.$slots[name] && !this.$slots[name].tag)
         ) {
           // only apply default styles for pure text slot
-          styles[key] = SLOT_STYLES;
+          styles[key] = SLOT_STYLES
         }
-      });
+      })
 
-      return styles;
-    },
+      return styles
+    }
   },
   watch: {
     identifier() {
-      this.stateChanger.reset();
-    },
+      this.stateChanger.reset()
+    }
   },
   mounted() {
     this.$watch(
-      "forceUseInfiniteWrapper",
+      'forceUseInfiniteWrapper',
       () => {
-        this.scrollParent = this.getScrollParent();
+        this.scrollParent = this.getScrollParent()
       },
       { immediate: true }
-    );
+    )
 
     this.scrollHandler = (ev) => {
       if (this.status === STATUS.READY) {
         if (ev && ev.constructor === Event && isVisible(this.$el)) {
-          throttleer.throttle(this.attemptLoad);
+          throttleer.throttle(this.attemptLoad)
         } else {
-          this.attemptLoad();
+          this.attemptLoad()
         }
       }
-    };
+    }
 
     setTimeout(() => {
-      this.scrollHandler();
+      this.scrollHandler()
       this.scrollParent.addEventListener(
-        "scroll",
+        'scroll',
         this.scrollHandler,
         evt3rdArg
-      );
-    }, 1);
+      )
+    }, 1)
 
     /**
      * change state for this component, pass to the callback
      */
     this.stateChanger = {
       loaded: () => {
-        this.InfiniteLoading_loaded({ target: this });
+        this.InfiniteLoading_loaded({ target: this })
       },
       complete: () => {
-        this.InfiniteLoading_complete({ target: this });
+        this.InfiniteLoading_complete({ target: this })
       },
       reset: () => {
-        this.InfiniteLoading_reset({ target: this });
+        this.InfiniteLoading_reset({ target: this })
       },
       error: () => {
-        this.status = STATUS.ERROR;
-        throttleer.reset();
-      },
-    };
+        this.status = STATUS.ERROR
+        throttleer.reset()
+      }
+    }
   },
   /**
    * To adapt to keep-alive feature, but only work on Vue 2.2.0 and above, see: https://vuejs.org/v2/api/#keep-alive
@@ -190,86 +190,86 @@ export default {
   deactivated() {
     /* istanbul ignore else */
     if (this.status === STATUS.LOADING) {
-      this.status = STATUS.READY;
+      this.status = STATUS.READY
     }
     this.scrollParent.removeEventListener(
-      "scroll",
+      'scroll',
       this.scrollHandler,
       evt3rdArg
-    );
+    )
   },
   activated() {
-    this.scrollParent.addEventListener("scroll", this.scrollHandler, evt3rdArg);
+    this.scrollParent.addEventListener('scroll', this.scrollHandler, evt3rdArg)
   },
   unmounted() {
     /* istanbul ignore else */
     if (!this.status !== STATUS.COMPLETE) {
-      throttleer.reset();
-      scrollBarStorage.remove(this.scrollParent);
+      throttleer.reset()
+      scrollBarStorage.remove(this.scrollParent)
       this.scrollParent.removeEventListener(
-        "scroll",
+        'scroll',
         this.scrollHandler,
         evt3rdArg
-      );
+      )
     }
   },
   methods: {
     InfiniteLoading_loaded(ev) {
-      this.isFirstLoad = false;
+      this.isFirstLoad = false
 
-      if (this.direction === "top") {
+      if (this.direction === 'top') {
         // wait for DOM updated
         this.$nextTick(() => {
-          scrollBarStorage.restore(this.scrollParent);
-        });
+          scrollBarStorage.restore(this.scrollParent)
+        })
       }
 
       if (this.status === STATUS.LOADING) {
-        this.$nextTick(this.attemptLoad.bind(null, true));
+        this.$nextTick(this.attemptLoad.bind(null, true))
       }
 
       if (!ev || ev.target !== this) {
-        warn(WARNINGS.STATE_CHANGER);
+        warn(WARNINGS.STATE_CHANGER)
       }
     },
 
     InfiniteLoading_complete(ev) {
-      this.status = STATUS.COMPLETE;
+      this.status = STATUS.COMPLETE
 
       // force re-complation computed properties to fix the problem of get slot text delay
       this.$nextTick(() => {
-        this.$forceUpdate();
-      });
+        this.$forceUpdate()
+      })
 
       this.scrollParent.removeEventListener(
-        "scroll",
+        'scroll',
         this.scrollHandler,
         evt3rdArg
-      );
+      )
 
       if (!ev || ev.target !== this) {
-        warn(WARNINGS.STATE_CHANGER);
+        warn(WARNINGS.STATE_CHANGER)
       }
     },
 
     InfiniteLoading_reset(ev) {
-      this.status = STATUS.READY;
-      this.isFirstLoad = true;
-      scrollBarStorage.remove(this.scrollParent);
+      this.status = STATUS.READY
+      this.isFirstLoad = true
+      scrollBarStorage.remove(this.scrollParent)
       this.scrollParent.addEventListener(
-        "scroll",
+        'scroll',
         this.scrollHandler,
         evt3rdArg
-      );
+      )
 
       // wait for list to be empty and the empty action may trigger a scroll event
       setTimeout(() => {
-        throttleer.reset();
-        this.scrollHandler();
-      }, 1);
+        throttleer.reset()
+        this.scrollHandler()
+      }, 1)
 
       if (!ev || ev.target !== this) {
-        warn(WARNINGS.IDENTIFIER);
+        warn(WARNINGS.IDENTIFIER)
       }
     },
 
@@ -285,16 +285,16 @@ export default {
         isVisible(this.$el) &&
         this.getCurrentDistance() <= this.distance
       ) {
-        this.status = STATUS.LOADING;
+        this.status = STATUS.LOADING
 
-        if (this.direction === "top") {
+        if (this.direction === 'top') {
           // wait for spinner display
           this.$nextTick(() => {
-            scrollBarStorage.save(this.scrollParent);
-          });
+            scrollBarStorage.save(this.scrollParent)
+          })
         }
 
-        this.$emit("infinite", this.stateChanger);
+        this.$emit('infinite', this.stateChanger)
 
         if (
           isContinuousCall &&
@@ -303,10 +303,10 @@ export default {
         ) {
           // check this component whether be in an infinite loop if it is not checked
           // more details: https://github.com/PeachScript/vue-infinite-loading/issues/55#issuecomment-316934169
-          loopTracker.track();
+          loopTracker.track()
         }
       } else if (this.status === STATUS.LOADING) {
-        this.status = STATUS.READY;
+        this.status = STATUS.READY
       }
     },
     /**
@@ -314,26 +314,26 @@ export default {
      * @return {Number}     distance
      */
     getCurrentDistance() {
-      let distance;
+      let distance
 
-      if (this.direction === "top") {
+      if (this.direction === 'top') {
         distance =
-          typeof this.scrollParent.scrollTop === "number"
+          typeof this.scrollParent.scrollTop === 'number'
             ? this.scrollParent.scrollTop
-            : this.scrollParent.pageYOffset;
+            : this.scrollParent.pageYOffset
       } else {
         const infiniteElmOffsetTopFromBottom =
-          this.$el.getBoundingClientRect().top;
+          this.$el.getBoundingClientRect().top
         const scrollElmOffsetTopFromBottom =
           this.scrollParent === window
             ? window.innerHeight
-            : this.scrollParent.getBoundingClientRect().bottom;
+            : this.scrollParent.getBoundingClientRect().bottom
 
         distance =
-          infiniteElmOffsetTopFromBottom - scrollElmOffsetTopFromBottom;
+          infiniteElmOffsetTopFromBottom - scrollElmOffsetTopFromBottom
       }
 
-      return distance;
+      return distance
     },
     /**
      * get the first scroll parent of an element
@@ -341,42 +341,42 @@ export default {
      * @return {DOM}        the first scroll parent
      */
     getScrollParent(elm = this.$el) {
-      let result;
+      let result
 
-      if (typeof this.forceUseInfiniteWrapper === "string") {
-        let component;
+      if (typeof this.forceUseInfiniteWrapper === 'string') {
+        let component
         if (this.webComponentName) {
-          component = document.querySelector(this.webComponentName);
+          component = document.querySelector(this.webComponentName)
         }
         if (component) {
           result = component.shadowRoot.querySelector(
             this.forceUseInfiniteWrapper
-          );
+          )
         } else {
-          result = document.querySelector(this.forceUseInfiniteWrapper);
+          result = document.querySelector(this.forceUseInfiniteWrapper)
         }
       }
 
       if (!result) {
-        if (elm.tagName === "BODY") {
-          result = window;
+        if (elm.tagName === 'BODY') {
+          result = window
         } else if (
           !this.forceUseInfiniteWrapper &&
-          ["scroll", "auto"].indexOf(getComputedStyle(elm).overflowY) > -1
+          ['scroll', 'auto'].indexOf(getComputedStyle(elm).overflowY) > -1
         ) {
-          result = elm;
+          result = elm
         } else if (
-          elm.hasAttribute("infinite-wrapper") ||
-          elm.hasAttribute("data-infinite-wrapper")
+          elm.hasAttribute('infinite-wrapper') ||
+          elm.hasAttribute('data-infinite-wrapper')
         ) {
-          result = elm;
+          result = elm
         }
       }
 
-      return result || this.getScrollParent(elm.parentNode);
-    },
-  },
-};
+      return result || this.getScrollParent(elm.parentNode)
+    }
+  }
+}
 </script>
 <style lang="scss" scoped>
 .infinite-loading-container {

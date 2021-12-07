@@ -21,19 +21,19 @@
 </template>
 
 <script>
-import SvgIcon from "../../../components/SvgIcon/SvgIcon";
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 
-import AudioControl from "../AudioControl/AudioControl";
+import AudioControl from '../AudioControl/AudioControl'
 
 export default {
-  name: "AudioPlayer",
+  name: 'AudioPlayer',
   components: {
     SvgIcon,
-    AudioControl,
+    AudioControl
   },
 
   props: {
-    src: { type: String, default: null },
+    src: { type: String, default: null }
   },
 
   data() {
@@ -42,72 +42,72 @@ export default {
       duration: this.convertTimeMMSS(0),
       playedTime: this.convertTimeMMSS(0),
       progress: 0,
-      _uid: 1,
-    };
+      _uid: 1
+    }
   },
 
   computed: {
     playerUniqId() {
-      return `audio-player${this._uid}`;
+      return `audio-player${this._uid}`
     },
     audioSource() {
-      if (this.src) return this.src;
-      this.resetProgress();
-      return null;
-    },
+      if (this.src) return this.src
+      this.resetProgress()
+      return null
+    }
   },
 
   mounted() {
-    this.player = document.getElementById(this.playerUniqId);
+    this.player = document.getElementById(this.playerUniqId)
 
-    this.player.addEventListener("ended", () => {
-      this.isPlaying = false;
-    });
+    this.player.addEventListener('ended', () => {
+      this.isPlaying = false
+    })
 
-    this.player.addEventListener("loadeddata", () => {
-      this.resetProgress();
-      this.duration = this.convertTimeMMSS(this.player.duration);
-      this.updateProgressTime();
-    });
+    this.player.addEventListener('loadeddata', () => {
+      this.resetProgress()
+      this.duration = this.convertTimeMMSS(this.player.duration)
+      this.updateProgressTime()
+    })
 
-    this.player.addEventListener("timeupdate", this.onTimeUpdate);
+    this.player.addEventListener('timeupdate', this.onTimeUpdate)
   },
 
   methods: {
     convertTimeMMSS(seconds) {
-      return new Date(seconds * 1000).toISOString().substr(14, 5);
+      return new Date(seconds * 1000).toISOString().substr(14, 5)
     },
     playback() {
-      if (!this.audioSource) return;
+      if (!this.audioSource) return
 
-      if (this.isPlaying) this.player.pause();
-      else setTimeout(() => this.player.play());
+      if (this.isPlaying) this.player.pause()
+      else setTimeout(() => this.player.play())
 
-      this.isPlaying = !this.isPlaying;
+      this.isPlaying = !this.isPlaying
     },
     resetProgress() {
-      if (this.isPlaying) this.player.pause();
+      if (this.isPlaying) this.player.pause()
 
-      this.duration = this.convertTimeMMSS(0);
-      this.playedTime = this.convertTimeMMSS(0);
-      this.progress = 0;
-      this.isPlaying = false;
-      this.updateProgressTime();
+      this.duration = this.convertTimeMMSS(0)
+      this.playedTime = this.convertTimeMMSS(0)
+      this.progress = 0
+      this.isPlaying = false
+      this.updateProgressTime()
     },
     onTimeUpdate() {
-      this.playedTime = this.convertTimeMMSS(this.player.currentTime);
-      this.progress = (this.player.currentTime / this.player.duration) * 100;
-      this.updateProgressTime();
+      this.playedTime = this.convertTimeMMSS(this.player.currentTime)
+      this.progress = (this.player.currentTime / this.player.duration) * 100
+      this.updateProgressTime()
     },
     onUpdateProgress(pos) {
-      if (pos) this.player.currentTime = pos * this.player.duration;
+      if (pos) this.player.currentTime = pos * this.player.duration
     },
     updateProgressTime() {
       this.$emit(
-        "update-progress-time",
+        'update-progress-time',
         this.progress > 1 ? this.playedTime : this.duration
-      );
-    },
-  },
-};
+      )
+    }
+  }
+}
 </script>

@@ -76,22 +76,22 @@
 </template>
 
 <script>
-import InfiniteLoading from "../../components/InfiniteLoading/index";
+import InfiniteLoading from '../../components/InfiniteLoading/index'
 
-import Loader from "../../components/Loader/Loader";
+import Loader from '../../components/Loader/Loader'
 
-import RoomsSearch from "./RoomsSearch/RoomsSearch";
-import RoomContent from "./RoomContent/RoomContent";
+import RoomsSearch from './RoomsSearch/RoomsSearch'
+import RoomContent from './RoomContent/RoomContent'
 
-import filteredUsers from "../../utils/filter-items";
+import filteredUsers from '../../utils/filter-items'
 
 export default {
-  name: "RoomsList",
+  name: 'RoomsList',
   components: {
     InfiniteLoading,
     Loader,
     RoomsSearch,
-    RoomContent,
+    RoomContent
   },
 
   props: {
@@ -107,7 +107,7 @@ export default {
     loadingRooms: { type: Boolean, required: true },
     roomsLoaded: { type: Boolean, required: true },
     room: { type: Object, required: true },
-    roomActions: { type: Array, required: true },
+    roomActions: { type: Array, required: true }
   },
 
   data() {
@@ -115,67 +115,67 @@ export default {
       filteredRooms: this.rooms || [],
       infiniteState: null,
       loadingMoreRooms: false,
-      selectedRoomId: "",
-    };
+      selectedRoomId: ''
+    }
   },
 
   watch: {
     rooms(newVal, oldVal) {
-      this.filteredRooms = newVal;
+      this.filteredRooms = newVal
 
       if (
         this.infiniteState &&
         (newVal.length !== oldVal.length || this.roomsLoaded)
       ) {
-        this.infiniteState.loaded();
-        this.loadingMoreRooms = false;
+        this.infiniteState.loaded()
+        this.loadingMoreRooms = false
       }
     },
     loadingRooms(val) {
-      if (val) this.infiniteState = null;
+      if (val) this.infiniteState = null
     },
     loadingMoreRooms(val) {
-      this.$emit("loading-more-rooms", val);
+      this.$emit('loading-more-rooms', val)
     },
     roomsLoaded(val) {
       if (val && this.infiniteState) {
-        this.loadingMoreRooms = false;
-        this.infiniteState.complete();
+        this.loadingMoreRooms = false
+        this.infiniteState.complete()
       }
     },
     room: {
       immediate: true,
       handler(val) {
-        if (val && !this.isMobile) this.selectedRoomId = val.roomId;
-      },
-    },
+        if (val && !this.isMobile) this.selectedRoomId = val.roomId
+      }
+    }
   },
 
   methods: {
     searchRoom(ev) {
       this.filteredRooms = filteredUsers(
         this.rooms,
-        "roomName",
+        'roomName',
         ev.target.value
-      );
+      )
     },
     openRoom(room) {
-      if (room.roomId === this.room.roomId && !this.isMobile) return;
-      if (!this.isMobile) this.selectedRoomId = room.roomId;
-      this.$emit("fetch-room", { room });
+      if (room.roomId === this.room.roomId && !this.isMobile) return
+      if (!this.isMobile) this.selectedRoomId = room.roomId
+      this.$emit('fetch-room', { room })
     },
     loadMoreRooms(infiniteState) {
-      if (this.loadingMoreRooms) return;
+      if (this.loadingMoreRooms) return
 
       if (this.roomsLoaded) {
-        this.loadingMoreRooms = false;
-        return infiniteState.complete();
+        this.loadingMoreRooms = false
+        return infiniteState.complete()
       }
 
-      this.infiniteState = infiniteState;
-      this.$emit("fetch-more-rooms");
-      this.loadingMoreRooms = true;
-    },
-  },
-};
+      this.infiniteState = infiniteState
+      this.$emit('fetch-more-rooms')
+      this.loadingMoreRooms = true
+    }
+  }
+}
 </script>

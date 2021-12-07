@@ -73,18 +73,18 @@
 </template>
 
 <script>
-import vClickOutside from "click-outside-vue3";
-import SvgIcon from "../../../components/SvgIcon/SvgIcon";
+import vClickOutside from 'click-outside-vue3'
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 
-import typingText from "../../../utils/typing-text";
+import typingText from '../../../utils/typing-text'
 
 export default {
-  name: "RoomHeader",
+  name: 'RoomHeader',
   directives: {
-    clickOutside: vClickOutside.directive,
+    clickOutside: vClickOutside.directive
   },
   components: {
-    SvgIcon,
+    SvgIcon
   },
 
   props: {
@@ -95,46 +95,46 @@ export default {
     isMobile: { type: Boolean, required: true },
     roomInfo: { type: Function, default: null },
     menuActions: { type: Array, required: true },
-    room: { type: Object, required: true },
+    room: { type: Object, required: true }
   },
 
   data() {
     return {
-      menuOpened: false,
-    };
+      menuOpened: false
+    }
   },
 
   computed: {
     typingUsers() {
-      return typingText(this.room, this.currentUserId, this.textMessages);
+      return typingText(this.room, this.currentUserId, this.textMessages)
     },
     userStatus() {
-      if (!this.room.users || this.room.users.length !== 2) return;
+      if (!this.room.users || this.room.users.length !== 2) return
 
-      const user = this.room.users.find((u) => u._id !== this.currentUserId);
+      const user = this.room.users.find((u) => u._id !== this.currentUserId)
 
-      if (!user.status) return;
+      if (!user.status) return
 
-      let text = "";
+      let text = ''
 
-      if (user.status.state === "online") {
-        text = this.textMessages.IS_ONLINE;
+      if (user.status.state === 'online') {
+        text = this.textMessages.IS_ONLINE
       } else if (user.status.lastChanged) {
-        text = this.textMessages.LAST_SEEN + user.status.lastChanged;
+        text = this.textMessages.LAST_SEEN + user.status.lastChanged
       }
 
-      return text;
-    },
+      return text
+    }
   },
 
   methods: {
     menuActionHandler(action) {
-      this.closeMenu();
-      this.$emit("menu-action-handler", action);
+      this.closeMenu()
+      this.$emit('menu-action-handler', action)
     },
     closeMenu() {
-      this.menuOpened = false;
-    },
-  },
-};
+      this.menuOpened = false
+    }
+  }
+}
 </script>

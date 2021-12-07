@@ -375,26 +375,26 @@
 </template>
 
 <script>
-import InfiniteLoading from "../../components/InfiniteLoading/index";
-import emojis from "../../components/EmojiPicker/emojis";
+import InfiniteLoading from '../../components/InfiniteLoading/index'
+import emojis from '../../components/EmojiPicker/emojis'
 
-import Loader from "../../components/Loader/Loader";
-import SvgIcon from "../../components/SvgIcon/SvgIcon";
-import EmojiPicker from "../../components/EmojiPicker/EmojiPicker";
+import Loader from '../../components/Loader/Loader'
+import SvgIcon from '../../components/SvgIcon/SvgIcon'
+import EmojiPicker from '../../components/EmojiPicker/EmojiPicker'
 
-import RoomHeader from "./RoomHeader/RoomHeader";
-import RoomMessageReply from "./RoomMessageReply/RoomMessageReply";
-import RoomUsersTag from "./RoomUsersTag/RoomUsersTag";
-import RoomEmojis from "./RoomEmojis/RoomEmojis";
-import Message from "../Message/Message";
+import RoomHeader from './RoomHeader/RoomHeader'
+import RoomMessageReply from './RoomMessageReply/RoomMessageReply'
+import RoomUsersTag from './RoomUsersTag/RoomUsersTag'
+import RoomEmojis from './RoomEmojis/RoomEmojis'
+import Message from '../Message/Message'
 
-import filteredUsers from "../../utils/filter-items";
-import Recorder from "../../utils/recorder";
-const { detectMobile, iOSDevice } = require("../../utils/mobile-detection");
-const { isImageFile, isVideoFile } = require("../../utils/media-file");
+import filteredUsers from '../../utils/filter-items'
+import Recorder from '../../utils/recorder'
+const { detectMobile, iOSDevice } = require('../../utils/mobile-detection')
+const { isImageFile, isVideoFile } = require('../../utils/media-file')
 
 export default {
-  name: "Room",
+  name: 'Room',
   components: {
     InfiniteLoading,
     Loader,
@@ -404,7 +404,7 @@ export default {
     RoomMessageReply,
     RoomUsersTag,
     RoomEmojis,
-    Message,
+    Message
   },
 
   props: {
@@ -434,12 +434,12 @@ export default {
     loadingRooms: { type: Boolean, required: true },
     roomInfo: { type: Function, default: null },
     textareaAction: { type: Function, default: null },
-    forceUsername: { type: Boolean, default: false },
+    forceUsername: { type: Boolean, default: false }
   },
 
   data() {
     return {
-      message: "",
+      message: '',
       editedMessage: {},
       messageReply: null,
       infiniteState: null,
@@ -463,17 +463,17 @@ export default {
       cursorRangePosition: null,
       recorder: this.initRecorder(),
       isRecording: false,
-      format: "mp3",
-    };
+      format: 'mp3'
+    }
   },
 
   computed: {
     emojisList() {
-      const emojisTable = Object.keys(emojis).map((key) => emojis[key]);
-      return Object.assign({}, ...emojisTable);
+      const emojisTable = Object.keys(emojis).map((key) => emojis[key])
+      return Object.assign({}, ...emojisTable)
     },
     room() {
-      return this.rooms.find((room) => room.roomId === this.roomId) || {};
+      return this.rooms.find((room) => room.roomId === this.roomId) || {}
     },
     showNoMessages() {
       return (
@@ -481,53 +481,53 @@ export default {
         !this.messages.length &&
         !this.loadingMessages &&
         !this.loadingRooms
-      );
+      )
     },
     showNoRoom() {
       const noRoomSelected =
         (!this.rooms.length && !this.loadingRooms) ||
-        (!this.room.roomId && !this.loadFirstRoom);
+        (!this.room.roomId && !this.loadFirstRoom)
 
       if (noRoomSelected) {
-        this.loadingMessages = false; /* eslint-disable-line vue/no-side-effects-in-computed-properties */
+        this.loadingMessages = false /* eslint-disable-line vue/no-side-effects-in-computed-properties */
       }
-      return noRoomSelected;
+      return noRoomSelected
     },
     showMessagesStarted() {
-      return this.messages.length && this.messagesLoaded;
+      return this.messages.length && this.messagesLoaded
     },
     isMessageEmpty() {
-      return !this.file && !this.message.trim();
+      return !this.file && !this.message.trim()
     },
     recordedTime() {
       return new Date(this.recorder.duration * 1000)
         .toISOString()
-        .substr(14, 5);
-    },
+        .substr(14, 5)
+    }
   },
 
   watch: {
     loadingMessages(val) {
       if (val) {
-        this.infiniteState = null;
+        this.infiniteState = null
       } else {
-        if (this.infiniteState) this.infiniteState.loaded();
-        this.focusTextarea(true);
+        if (this.infiniteState) this.infiniteState.loaded()
+        this.focusTextarea(true)
       }
     },
     room: {
       immediate: true,
       handler(newVal, oldVal) {
         if (newVal.roomId && (!oldVal || newVal.roomId !== oldVal.roomId)) {
-          this.onRoomChanged();
+          this.onRoomChanged()
         }
-      },
+      }
     },
     roomMessage: {
       immediate: true,
       handler(val) {
-        if (val) this.message = this.roomMessage;
-      },
+        if (val) this.message = this.roomMessage
+      }
     },
     messages(newVal, oldVal) {
       newVal.forEach((message, i) => {
@@ -538,44 +538,44 @@ export default {
         ) {
           this.newMessages.push({
             _id: message._id,
-            index: i,
-          });
+            index: i
+          })
         }
-      });
+      })
 
       if (oldVal?.length === newVal?.length - 1) {
-        this.newMessages = [];
+        this.newMessages = []
       }
 
       if (this.infiniteState) {
-        this.infiniteState.loaded();
+        this.infiniteState.loaded()
       }
 
-      setTimeout(() => (this.loadingMoreMessages = false));
+      setTimeout(() => (this.loadingMoreMessages = false))
     },
     messagesLoaded(val) {
-      if (val) this.loadingMessages = false;
-      if (this.infiniteState) this.infiniteState.complete();
-    },
+      if (val) this.loadingMessages = false
+      if (this.infiniteState) this.infiniteState.complete()
+    }
   },
 
   mounted() {
-    this.newMessages = [];
-    const isMobile = detectMobile();
+    this.newMessages = []
+    const isMobile = detectMobile()
 
-    window.addEventListener("keyup", (e) => {
-      if (e.key === "Enter" && !e.shiftKey && !this.fileDialog) {
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && !this.fileDialog) {
         if (isMobile) {
-          this.message = this.message + "\n";
-          setTimeout(() => this.onChangeInput());
+          this.message = this.message + '\n'
+          setTimeout(() => this.onChangeInput())
         } else {
-          this.sendMessage();
+          this.sendMessage()
         }
       }
 
-      this.updateFooterList("@");
-      this.updateFooterList(":");
-    });
+      this.updateFooterList('@')
+      this.updateFooterList(':')
+    })
 
     // this.$refs['roomTextarea'].addEventListener('click', () => {
     // 	if (isMobile) this.keepKeyboardOpen = true
@@ -590,204 +590,204 @@ export default {
   },
 
   beforeUnmount() {
-    this.stopRecorder();
+    this.stopRecorder()
   },
 
   methods: {
     onRoomChanged() {
-      this.loadingMessages = true;
-      this.scrollIcon = false;
-      this.scrollMessagesCount = 0;
-      this.resetMessage(true, null, true);
+      this.loadingMessages = true
+      this.scrollIcon = false
+      this.scrollMessagesCount = 0
+      this.resetMessage(true, null, true)
 
       if (this.roomMessage) {
-        this.message = this.roomMessage;
-        setTimeout(() => this.onChangeInput());
+        this.message = this.roomMessage
+        setTimeout(() => this.onChangeInput())
       }
 
       if (!this.messages.length && this.messagesLoaded) {
-        this.loadingMessages = false;
+        this.loadingMessages = false
       }
 
       const unwatch = this.$watch(
         () => this.messages,
         (val) => {
-          if (!val || !val.length) return;
+          if (!val || !val.length) return
 
-          const element = this.$refs.scrollContainer;
-          if (!element) return;
+          const element = this.$refs.scrollContainer
+          if (!element) return
 
-          unwatch();
+          unwatch()
 
           setTimeout(() => {
-            element.scrollTo({ top: element.scrollHeight });
-            this.loadingMessages = false;
-          });
+            element.scrollTo({ top: element.scrollHeight })
+            this.loadingMessages = false
+          })
         }
-      );
+      )
     },
     onMessageAdded({ message, index, ref }) {
-      if (index !== this.messages.length - 1) return;
+      if (index !== this.messages.length - 1) return
 
-      const autoScrollOffset = ref.offsetHeight + 60;
+      const autoScrollOffset = ref.offsetHeight + 60
 
       setTimeout(() => {
         if (
           this.getBottomScroll(this.$refs.scrollContainer) < autoScrollOffset
         ) {
-          this.scrollToBottom();
+          this.scrollToBottom()
         } else {
           if (message.senderId === this.currentUserId) {
-            this.scrollToBottom();
+            this.scrollToBottom()
           } else {
-            this.scrollIcon = true;
-            this.scrollMessagesCount++;
+            this.scrollIcon = true
+            this.scrollMessagesCount++
           }
         }
-      });
+      })
     },
     onContainerScroll(e) {
       // this.hideOptions = true;
 
-      if (!e.target) return;
+      if (!e.target) return
 
-      const bottomScroll = this.getBottomScroll(e.target);
-      if (bottomScroll < 60) this.scrollMessagesCount = 0;
-      this.scrollIcon = bottomScroll > 500 || this.scrollMessagesCount;
+      const bottomScroll = this.getBottomScroll(e.target)
+      if (bottomScroll < 60) this.scrollMessagesCount = 0
+      this.scrollIcon = bottomScroll > 500 || this.scrollMessagesCount
     },
     updateFooterList(tagChar) {
-      if (!this.$refs["roomTextarea"]) return;
+      if (!this.$refs['roomTextarea']) return
 
       if (
-        tagChar === "@" &&
+        tagChar === '@' &&
         (!this.room.users || this.room.users.length <= 2)
       ) {
-        return;
+        return
       }
 
       if (
         this.textareaCursorPosition ===
-        this.$refs["roomTextarea"].selectionStart
+        this.$refs['roomTextarea'].selectionStart
       ) {
-        return;
+        return
       }
 
-      this.textareaCursorPosition = this.$refs["roomTextarea"].selectionStart;
+      this.textareaCursorPosition = this.$refs['roomTextarea'].selectionStart
 
-      let position = this.textareaCursorPosition;
+      let position = this.textareaCursorPosition
 
       while (
         position > 0 &&
         this.message.charAt(position - 1) !== tagChar &&
-        this.message.charAt(position - 1) !== " "
+        this.message.charAt(position - 1) !== ' '
       ) {
-        position--;
+        position--
       }
 
-      const beforeTag = this.message.charAt(position - 2);
-      const notLetterNumber = !beforeTag.match(/^[0-9a-zA-Z]+$/);
+      const beforeTag = this.message.charAt(position - 2)
+      const notLetterNumber = !beforeTag.match(/^[0-9a-zA-Z]+$/)
 
       if (
         this.message.charAt(position - 1) === tagChar &&
-        (!beforeTag || beforeTag === " " || notLetterNumber)
+        (!beforeTag || beforeTag === ' ' || notLetterNumber)
       ) {
         const query = this.message.substring(
           position,
           this.textareaCursorPosition
-        );
-        if (tagChar === ":") {
-          this.updateEmojis(query);
-        } else if (tagChar === "@") {
-          this.updateShowUsersTag(query);
+        )
+        if (tagChar === ':') {
+          this.updateEmojis(query)
+        } else if (tagChar === '@') {
+          this.updateShowUsersTag(query)
         }
       } else {
-        this.resetFooterList();
+        this.resetFooterList()
       }
     },
     getCharPosition(tagChar) {
-      const cursorPosition = this.$refs["roomTextarea"].selectionStart;
+      const cursorPosition = this.$refs['roomTextarea'].selectionStart
 
-      let position = cursorPosition;
+      let position = cursorPosition
       while (position > 0 && this.message.charAt(position - 1) !== tagChar) {
-        position--;
+        position--
       }
 
-      let endPosition = position;
+      let endPosition = position
       while (
         this.message.charAt(endPosition) &&
         this.message.charAt(endPosition).trim()
       ) {
-        endPosition++;
+        endPosition++
       }
 
-      return { position, endPosition };
+      return { position, endPosition }
     },
     updateEmojis(query) {
-      if (!query) return;
+      if (!query) return
 
-      const emojisListKeys = Object.keys(this.emojisList);
+      const emojisListKeys = Object.keys(this.emojisList)
       const matchingKeys = emojisListKeys.filter((key) =>
         key.startsWith(query)
-      );
+      )
 
-      this.filteredEmojis = matchingKeys.map((key) => this.emojisList[key]);
+      this.filteredEmojis = matchingKeys.map((key) => this.emojisList[key])
     },
     selectEmoji(emoji) {
-      const { position, endPosition } = this.getCharPosition(":");
+      const { position, endPosition } = this.getCharPosition(':')
 
       this.message =
         this.message.substr(0, position - 1) +
         emoji +
-        this.message.substr(endPosition, this.message.length - 1);
+        this.message.substr(endPosition, this.message.length - 1)
 
-      this.cursorRangePosition = position;
-      this.focusTextarea();
+      this.cursorRangePosition = position
+      this.focusTextarea()
     },
     updateShowUsersTag(query) {
       this.filteredUsersTag = filteredUsers(
         this.room.users,
-        "username",
+        'username',
         query,
         true
-      ).filter((user) => user._id !== this.currentUserId);
+      ).filter((user) => user._id !== this.currentUserId)
     },
     selectUserTag(user) {
-      const { position, endPosition } = this.getCharPosition("@");
+      const { position, endPosition } = this.getCharPosition('@')
 
       const space = this.message.substr(endPosition, endPosition).length
-        ? ""
-        : " ";
+        ? ''
+        : ' '
 
       this.message =
         this.message.substr(0, position) +
         user.username +
         space +
-        this.message.substr(endPosition, this.message.length - 1);
+        this.message.substr(endPosition, this.message.length - 1)
 
-      this.selectedUsersTag = [...this.selectedUsersTag, { ...user }];
+      this.selectedUsersTag = [...this.selectedUsersTag, { ...user }]
 
       this.cursorRangePosition =
-        position + user.username.length + space.length + 1;
-      this.focusTextarea();
+        position + user.username.length + space.length + 1
+      this.focusTextarea()
     },
     resetFooterList() {
-      this.filteredEmojis = [];
-      this.filteredUsersTag = [];
-      this.textareaCursorPosition = null;
+      this.filteredEmojis = []
+      this.filteredUsersTag = []
+      this.textareaCursorPosition = null
     },
     onMediaLoad() {
-      let height = this.$refs.mediaFile.clientHeight;
-      if (height < 30) height = 30;
+      let height = this.$refs.mediaFile.clientHeight
+      if (height < 30) height = 30
 
       this.mediaDimensions = {
         height: this.$refs.mediaFile.clientHeight - 10,
-        width: this.$refs.mediaFile.clientWidth + 26,
-      };
+        width: this.$refs.mediaFile.clientWidth + 26
+      }
     },
     escapeTextarea() {
-      if (this.filteredEmojis.length) this.filteredEmojis = [];
-      else if (this.filteredUsersTag.length) this.filteredUsersTag = [];
-      else this.resetMessage();
+      if (this.filteredEmojis.length) this.filteredEmojis = []
+      else if (this.filteredUsersTag.length) this.filteredUsersTag = []
+      else this.resetMessage()
     },
     resetMessage(
       disableMobileFocus = false,
@@ -795,200 +795,200 @@ export default {
       initRoom = false
     ) {
       if (!initRoom) {
-        this.$emit("typing-message", null);
+        this.$emit('typing-message', null)
       }
 
       if (editFile) {
-        this.file = null;
-        this.message = "";
-        this.preventKeyboardFromClosing();
-        setTimeout(() => this.focusTextarea(disableMobileFocus));
-        return;
+        this.file = null
+        this.message = ''
+        this.preventKeyboardFromClosing()
+        setTimeout(() => this.focusTextarea(disableMobileFocus))
+        return
       }
 
-      this.selectedUsersTag = [];
-      this.resetFooterList();
-      this.resetTextareaSize();
-      this.message = "";
-      this.editedMessage = {};
-      this.messageReply = null;
-      this.file = null;
-      this.mediaDimensions = null;
-      this.imageFile = null;
-      this.videoFile = null;
-      this.emojiOpened = false;
-      this.preventKeyboardFromClosing();
-      setTimeout(() => this.focusTextarea(disableMobileFocus));
+      this.selectedUsersTag = []
+      this.resetFooterList()
+      this.resetTextareaSize()
+      this.message = ''
+      this.editedMessage = {}
+      this.messageReply = null
+      this.file = null
+      this.mediaDimensions = null
+      this.imageFile = null
+      this.videoFile = null
+      this.emojiOpened = false
+      this.preventKeyboardFromClosing()
+      setTimeout(() => this.focusTextarea(disableMobileFocus))
     },
     resetMediaFile() {
-      this.mediaDimensions = null;
-      this.imageFile = null;
-      this.videoFile = null;
-      this.editedMessage.file = null;
-      this.file = null;
-      this.message = "";
-      this.focusTextarea();
+      this.mediaDimensions = null
+      this.imageFile = null
+      this.videoFile = null
+      this.editedMessage.file = null
+      this.file = null
+      this.message = ''
+      this.focusTextarea()
     },
     resetTextareaSize() {
-      if (!this.$refs["roomTextarea"]) return;
-      this.$refs["roomTextarea"].style.height = "20px";
+      if (!this.$refs['roomTextarea']) return
+      this.$refs['roomTextarea'].style.height = '20px'
     },
     focusTextarea(disableMobileFocus) {
-      if (detectMobile() && disableMobileFocus) return;
-      if (!this.$refs["roomTextarea"]) return;
-      this.$refs["roomTextarea"].focus();
+      if (detectMobile() && disableMobileFocus) return
+      if (!this.$refs['roomTextarea']) return
+      this.$refs['roomTextarea'].focus()
 
       if (this.cursorRangePosition) {
         setTimeout(() => {
-          this.$refs["roomTextarea"].setSelectionRange(
+          this.$refs['roomTextarea'].setSelectionRange(
             this.cursorRangePosition,
             this.cursorRangePosition
-          );
-          this.cursorRangePosition = null;
-        });
+          )
+          this.cursorRangePosition = null
+        })
       }
     },
     preventKeyboardFromClosing() {
-      if (this.keepKeyboardOpen) this.$refs["roomTextarea"].focus();
+      if (this.keepKeyboardOpen) this.$refs['roomTextarea'].focus()
     },
     sendMessage() {
-      let message = this.message.trim();
+      let message = this.message.trim()
 
-      if (!this.file && !message) return;
+      if (!this.file && !message) return
 
       this.selectedUsersTag.forEach((user) => {
         message = message.replace(
           `@${user.username}`,
           `<usertag>${user._id}</usertag>`
-        );
-      });
+        )
+      })
 
       if (this.editedMessage._id) {
         if (this.editedMessage.content !== message || this.file) {
-          this.$emit("edit-message", {
+          this.$emit('edit-message', {
             messageId: this.editedMessage._id,
             newContent: message,
             file: this.file,
             replyMessage: this.messageReply,
-            usersTag: this.selectedUsersTag,
-          });
+            usersTag: this.selectedUsersTag
+          })
         }
       } else {
-        this.$emit("send-message", {
+        this.$emit('send-message', {
           content: message,
           file: this.file,
           replyMessage: this.messageReply,
-          usersTag: this.selectedUsersTag,
-        });
+          usersTag: this.selectedUsersTag
+        })
       }
 
-      this.resetMessage(true);
+      this.resetMessage(true)
     },
     loadMoreMessages(infiniteState) {
-      //FIX for fast room changing (infinite-loading setTimeout-nature)
-      if (!this.messages.length) return;
+      // FIX for fast room changing (infinite-loading setTimeout-nature)
+      if (!this.messages.length) return
 
       if (this.loadingMessages) {
-        this.infiniteState = infiniteState;
-        return;
+        this.infiniteState = infiniteState
+        return
       }
 
       setTimeout(
         () => {
-          if (this.loadingMoreMessages) return;
+          if (this.loadingMoreMessages) return
 
           if (this.messagesLoaded || !this.room.roomId) {
-            return infiniteState.complete();
+            return infiniteState.complete()
           }
 
-          this.infiniteState = infiniteState;
-          this.$emit("fetch-messages");
-          this.loadingMoreMessages = true;
+          this.infiniteState = infiniteState
+          this.$emit('fetch-messages')
+          this.loadingMoreMessages = true
         },
         // prevent scroll bouncing issue on iOS devices
         iOSDevice() ? 500 : 0
-      );
+      )
     },
     messageActionHandler({ action, message }) {
       switch (action.name) {
-        case "replyMessage":
-          return this.replyMessage(message);
-        case "editMessage":
-          return this.editMessage(message);
-        case "deleteMessage":
-          return this.$emit("delete-message", message);
+        case 'replyMessage':
+          return this.replyMessage(message)
+        case 'editMessage':
+          return this.editMessage(message)
+        case 'deleteMessage':
+          return this.$emit('delete-message', message)
         default:
-          return this.$emit("message-action-handler", { action, message });
+          return this.$emit('message-action-handler', { action, message })
       }
     },
     sendMessageReaction(messageReaction) {
-      this.$emit("send-message-reaction", messageReaction);
+      this.$emit('send-message-reaction', messageReaction)
     },
     replyMessage(message) {
-      this.messageReply = message;
-      this.focusTextarea();
+      this.messageReply = message
+      this.focusTextarea()
     },
     editMessage(message) {
-      this.resetMessage();
-      this.editedMessage = { ...message };
-      this.file = message.file;
+      this.resetMessage()
+      this.editedMessage = { ...message }
+      this.file = message.file
 
       if (isImageFile(this.file)) {
-        this.imageFile = message.file.url;
-        setTimeout(() => this.onMediaLoad());
+        this.imageFile = message.file.url
+        setTimeout(() => this.onMediaLoad())
       } else if (isVideoFile(this.file)) {
-        this.videoFile = message.file.url;
-        setTimeout(() => this.onMediaLoad(), 50);
+        this.videoFile = message.file.url
+        setTimeout(() => this.onMediaLoad(), 50)
       }
 
-      this.message = message.content;
+      this.message = message.content
     },
     getBottomScroll(element) {
-      const { scrollHeight, clientHeight, scrollTop } = element;
-      return scrollHeight - clientHeight - scrollTop;
+      const { scrollHeight, clientHeight, scrollTop } = element
+      return scrollHeight - clientHeight - scrollTop
     },
     scrollToBottom() {
       setTimeout(() => {
-        const element = this.$refs.scrollContainer;
-        element.classList.add("vac-scroll-smooth");
-        element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
-        setTimeout(() => element.classList.remove("vac-scroll-smooth"));
-      }, 50);
+        const element = this.$refs.scrollContainer
+        element.classList.add('vac-scroll-smooth')
+        element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' })
+        setTimeout(() => element.classList.remove('vac-scroll-smooth'))
+      }, 50)
     },
     onChangeInput() {
-      this.keepKeyboardOpen = true;
-      this.resizeTextarea();
-      this.$emit("typing-message", this.message);
+      this.keepKeyboardOpen = true
+      this.resizeTextarea()
+      this.$emit('typing-message', this.message)
     },
     resizeTextarea() {
-      const el = this.$refs["roomTextarea"];
+      const el = this.$refs['roomTextarea']
 
-      if (!el) return;
+      if (!el) return
 
       const padding = window
         .getComputedStyle(el, null)
-        .getPropertyValue("padding-top")
-        .replace("px", "");
+        .getPropertyValue('padding-top')
+        .replace('px', '')
 
-      el.style.height = 0;
-      el.style.height = el.scrollHeight - padding * 2 + "px";
+      el.style.height = 0
+      el.style.height = el.scrollHeight - padding * 2 + 'px'
     },
     addEmoji(emoji) {
-      this.message += emoji.icon;
-      this.focusTextarea(true);
+      this.message += emoji.icon
+      this.focusTextarea(true)
     },
     launchFilePicker() {
-      this.$refs.file.value = "";
-      this.$refs.file.click();
+      this.$refs.file.value = ''
+      this.$refs.file.click()
     },
     async onFileChange(files) {
-      this.fileDialog = true;
-      this.resetMediaFile();
+      this.fileDialog = true
+      this.resetMediaFile()
 
-      const file = files[0];
-      const fileURL = URL.createObjectURL(file);
-      const blobFile = await fetch(fileURL).then((res) => res.blob());
-      const typeIndex = file.name.lastIndexOf(".");
+      const file = files[0]
+      const fileURL = URL.createObjectURL(file)
+      const blobFile = await fetch(fileURL).then((res) => res.blob())
+      const typeIndex = file.name.lastIndexOf('.')
 
       this.file = {
         blob: blobFile,
@@ -996,44 +996,44 @@ export default {
         size: file.size,
         type: file.type,
         extension: file.name.substring(typeIndex + 1),
-        url: fileURL,
-      };
-
-      if (isImageFile(this.file)) {
-        this.imageFile = fileURL;
-      } else if (isVideoFile(this.file)) {
-        this.videoFile = fileURL;
-        setTimeout(() => this.onMediaLoad(), 50);
-      } else {
-        this.message = file.name;
+        url: fileURL
       }
 
-      setTimeout(() => (this.fileDialog = false), 500);
+      if (isImageFile(this.file)) {
+        this.imageFile = fileURL
+      } else if (isVideoFile(this.file)) {
+        this.videoFile = fileURL
+        setTimeout(() => this.onMediaLoad(), 50)
+      } else {
+        this.message = file.name
+      }
+
+      setTimeout(() => (this.fileDialog = false), 500)
     },
     initRecorder() {
-      this.isRecording = false;
+      this.isRecording = false
 
       return new Recorder({
         beforeRecording: null,
         afterRecording: null,
         pauseRecording: null,
-        micFailed: this.micFailed,
-      });
+        micFailed: this.micFailed
+      })
     },
     micFailed() {
-      this.isRecording = false;
-      this.recorder = this.initRecorder();
+      this.isRecording = false
+      this.recorder = this.initRecorder()
     },
     toggleRecorder(recording) {
-      this.isRecording = recording;
+      this.isRecording = recording
 
       if (!this.recorder.isRecording) {
-        setTimeout(() => this.recorder.start(), 200);
+        setTimeout(() => this.recorder.start(), 200)
       } else {
         try {
-          this.recorder.stop();
+          this.recorder.stop()
 
-          const record = this.recorder.records[0];
+          const record = this.recorder.records[0]
 
           this.file = {
             blob: record.blob,
@@ -1042,35 +1042,35 @@ export default {
             duration: record.duration,
             type: record.blob.type,
             audio: true,
-            url: URL.createObjectURL(record.blob),
-          };
+            url: URL.createObjectURL(record.blob)
+          }
 
-          this.recorder = this.initRecorder();
-          this.sendMessage();
+          this.recorder = this.initRecorder()
+          this.sendMessage()
         } catch {
-          setTimeout(() => this.stopRecorder(), 100);
+          setTimeout(() => this.stopRecorder(), 100)
         }
       }
     },
     stopRecorder() {
       if (this.recorder.isRecording) {
         try {
-          this.recorder.stop();
-          this.recorder = this.initRecorder();
+          this.recorder.stop()
+          this.recorder = this.initRecorder()
         } catch {
-          setTimeout(() => this.stopRecorder(), 100);
+          setTimeout(() => this.stopRecorder(), 100)
         }
       }
     },
     openFile({ message, action }) {
-      this.$emit("open-file", { message, action });
+      this.$emit('open-file', { message, action })
     },
     openUserTag(user) {
-      this.$emit("open-user-tag", user);
+      this.$emit('open-user-tag', user)
     },
     textareaActionHandler() {
-      this.$emit("textarea-action-handler", this.message);
-    },
-  },
-};
+      this.$emit('textarea-action-handler', this.message)
+    }
+  }
+}
 </script>

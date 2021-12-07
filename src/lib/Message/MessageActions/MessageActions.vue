@@ -82,16 +82,16 @@
 </template>
 
 <script>
-import vClickOutside from "click-outside-vue3";
-import SvgIcon from "../../../components/SvgIcon/SvgIcon";
-import EmojiPicker from "../../../components/EmojiPicker/EmojiPicker";
+import vClickOutside from 'click-outside-vue3'
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
+import EmojiPicker from '../../../components/EmojiPicker/EmojiPicker'
 
-const { isImageFile } = require("../../../utils/media-file");
+const { isImageFile } = require('../../../utils/media-file')
 
 export default {
-  name: "MessageActions",
+  name: 'MessageActions',
   directives: {
-    clickOutside: vClickOutside.directive,
+    clickOutside: vClickOutside.directive
   },
   components: { SvgIcon, EmojiPicker },
 
@@ -104,7 +104,7 @@ export default {
     hideOptions: { type: Boolean, required: true },
     messageHover: { type: Boolean, required: true },
     hoverMessageId: { type: [String, Number], default: null },
-    hoverAudioProgress: { type: Boolean, required: true },
+    hoverAudioProgress: { type: Boolean, required: true }
   },
 
   data() {
@@ -112,13 +112,13 @@ export default {
       menuOptionsTop: 0,
       optionsOpened: false,
       optionsClosing: false,
-      emojiOpened: false,
-    };
+      emojiOpened: false
+    }
   },
 
   computed: {
     isImage() {
-      return isImageFile(this.message.file);
+      return isImageFile(this.message.file)
     },
     isMessageActions() {
       return (
@@ -127,7 +127,7 @@ export default {
         !this.message.deleted &&
         !this.message.disableActions &&
         !this.hoverAudioProgress
-      );
+      )
     },
     isMessageReactions() {
       return (
@@ -136,7 +136,7 @@ export default {
         !this.message.deleted &&
         !this.message.disableReactions &&
         !this.hoverAudioProgress
-      );
+      )
     },
     filteredMessageActions() {
       return this.message.senderId === this.currentUserId
@@ -145,34 +145,34 @@ export default {
               !action.timeout ||
               new Date() - this.message.createdDate < 1000 * action.timeout
           )
-        : this.messageActions.filter((action) => !action.onlyMe);
-    },
+        : this.messageActions.filter((action) => !action.onlyMe)
+    }
   },
 
   watch: {
     emojiOpened(val) {
-      this.$emit("update-emoji-opened", val);
-      if (val) this.optionsOpened = false;
+      this.$emit('update-emoji-opened', val)
+      if (val) this.optionsOpened = false
     },
     hideOptions(val) {
       if (val) {
-        this.closeEmoji();
-        this.closeOptions();
+        this.closeEmoji()
+        this.closeOptions()
       }
     },
     optionsOpened(val) {
-      this.$emit("update-options-opened", val);
-    },
+      this.$emit('update-options-opened', val)
+    }
   },
 
   methods: {
     openOptions() {
-      if (this.optionsClosing) return;
+      if (this.optionsClosing) return
 
-      this.optionsOpened = !this.optionsOpened;
-      if (!this.optionsOpened) return;
+      this.optionsOpened = !this.optionsOpened
+      if (!this.optionsOpened) return
 
-      this.$emit("hide-options", false);
+      this.$emit('hide-options', false)
 
       setTimeout(() => {
         if (
@@ -180,49 +180,49 @@ export default {
           !this.$refs.menuOptions ||
           !this.$refs.actionIcon
         ) {
-          return;
+          return
         }
 
         const menuOptionsTop =
-          this.$refs.menuOptions.getBoundingClientRect().height;
+          this.$refs.menuOptions.getBoundingClientRect().height
 
-        const actionIconTop = this.$refs.actionIcon.getBoundingClientRect().top;
-        const roomFooterTop = this.roomFooterRef.getBoundingClientRect().top;
+        const actionIconTop = this.$refs.actionIcon.getBoundingClientRect().top
+        const roomFooterTop = this.roomFooterRef.getBoundingClientRect().top
 
         const optionsTopPosition =
-          roomFooterTop - actionIconTop > menuOptionsTop + 50;
+          roomFooterTop - actionIconTop > menuOptionsTop + 50
 
-        if (optionsTopPosition) this.menuOptionsTop = 30;
-        else this.menuOptionsTop = -menuOptionsTop;
-      });
+        if (optionsTopPosition) this.menuOptionsTop = 30
+        else this.menuOptionsTop = -menuOptionsTop
+      })
     },
     closeOptions() {
-      this.optionsOpened = false;
-      this.optionsClosing = true;
-      this.updateMessageHover();
-      setTimeout(() => (this.optionsClosing = false), 100);
+      this.optionsOpened = false
+      this.optionsClosing = true
+      this.updateMessageHover()
+      setTimeout(() => (this.optionsClosing = false), 100)
     },
     openEmoji() {
-      this.emojiOpened = !this.emojiOpened;
-      this.$emit("hide-options", false);
+      this.emojiOpened = !this.emojiOpened
+      this.$emit('hide-options', false)
     },
     closeEmoji() {
-      this.emojiOpened = false;
-      this.updateMessageHover();
+      this.emojiOpened = false
+      this.updateMessageHover()
     },
     updateMessageHover() {
       if (this.hoverMessageId !== this.message._id) {
-        this.$emit("update-message-hover", false);
+        this.$emit('update-message-hover', false)
       }
     },
     messageActionHandler(action) {
-      this.closeOptions();
-      this.$emit("message-action-handler", action);
+      this.closeOptions()
+      this.$emit('message-action-handler', action)
     },
     sendMessageReaction(emoji, reaction) {
-      this.$emit("send-message-reaction", { emoji, reaction });
-      this.closeEmoji();
-    },
-  },
-};
+      this.$emit('send-message-reaction', { emoji, reaction })
+      this.closeEmoji()
+    }
+  }
+}
 </script>
