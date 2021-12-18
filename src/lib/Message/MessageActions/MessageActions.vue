@@ -1,228 +1,232 @@
 <template>
-  <div class="vac-message-actions-wrapper">
-    <div
-      class="vac-options-container"
-      :class="{ 'vac-options-image': isImage && !message.replyMessage }"
-      :style="{
-        display: hoverAudioProgress ? 'none' : 'initial',
-        width:
-          filteredMessageActions.length && showReactionEmojis ? '70px' : '45px',
-      }"
-    >
-      <transition-group name="vac-slide-left" tag="span">
-        <div
-          v-if="isMessageActions || isMessageReactions"
-          key="1"
-          class="vac-blur-container"
-          :class="{
-            'vac-options-me': message.senderId === currentUserId,
-          }"
-        />
+	<div class="vac-message-actions-wrapper">
+		<div
+			class="vac-options-container"
+			:style="{
+				display: hoverAudioProgress ? 'none' : 'initial',
+				width:
+					filteredMessageActions.length && showReactionEmojis ? '70px' : '45px'
+			}"
+		>
+			<transition-group name="vac-slide-left" tag="span">
+				<div
+					v-if="isMessageActions || isMessageReactions"
+					key="1"
+					class="vac-blur-container"
+					:class="{
+						'vac-options-me': message.senderId === currentUserId
+					}"
+				/>
 
-        <div
-          v-if="isMessageActions"
-          ref="actionIcon"
-          key="2"
-          class="vac-svg-button vac-message-options"
-          @click="openOptions"
-        >
-          <slot name="dropdown-icon">
-            <svg-icon name="dropdown" param="message" />
-          </slot>
-        </div>
+				<div
+					v-if="isMessageActions"
+					ref="actionIcon"
+					key="2"
+					class="vac-svg-button vac-message-options"
+					@click="openOptions"
+				>
+					<slot name="dropdown-icon">
+						<svg-icon name="dropdown" param="message" />
+					</slot>
+				</div>
 
-        <emoji-picker
-          v-if="isMessageReactions"
-          key="3"
-          v-click-outside="closeEmoji"
-          class="vac-message-emojis"
-          :style="{ right: isMessageActions ? '30px' : '5px' }"
-          :emoji-opened="emojiOpened"
-          :emoji-reaction="true"
-          :room-footer-ref="roomFooterRef"
-          :position-right="message.senderId === currentUserId"
-          @add-emoji="sendMessageReaction"
-          @open-emoji="openEmoji"
-        >
-          <template #emoji-picker-icon>
-            <slot name="emoji-picker-reaction-icon" />
-          </template>
-        </emoji-picker>
-      </transition-group>
-    </div>
+				<emoji-picker-container
+					v-if="isMessageReactions"
+					key="3"
+					v-click-outside="closeEmoji"
+					class="vac-message-emojis"
+					:style="{ right: isMessageActions ? '30px' : '5px' }"
+					:emoji-opened="emojiOpened"
+					:emoji-reaction="true"
+					:room-footer-ref="roomFooterRef"
+					:position-right="message.senderId === currentUserId"
+					@add-emoji="sendMessageReaction"
+					@open-emoji="openEmoji"
+				>
+					<template #emoji-picker-icon>
+						<slot name="emoji-picker-reaction-icon" />
+					</template>
+				</emoji-picker-container>
+			</transition-group>
+		</div>
 
-    <transition
-      v-if="filteredMessageActions.length"
-      :name="
-        message.senderId === currentUserId
-          ? 'vac-slide-left'
-          : 'vac-slide-right'
-      "
-    >
-      <div
-        v-if="optionsOpened"
-        ref="menuOptions"
-        v-click-outside="closeOptions"
-        class="vac-menu-options"
-        :class="{
-          'vac-menu-left': message.senderId !== currentUserId,
-        }"
-        :style="{ top: `${menuOptionsTop}px` }"
-      >
-        <div class="vac-menu-list">
-          <div v-for="action in filteredMessageActions" :key="action.name">
-            <div class="vac-menu-item" @click="messageActionHandler(action)">
-              {{ action.title }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-  </div>
+		<transition
+			v-if="filteredMessageActions.length"
+			:name="
+				message.senderId === currentUserId
+					? 'vac-slide-left'
+					: 'vac-slide-right'
+			"
+		>
+			<div
+				v-if="optionsOpened"
+				ref="menuOptions"
+				v-click-outside="closeOptions"
+				class="vac-menu-options"
+				:class="{
+					'vac-menu-left': message.senderId !== currentUserId
+				}"
+				:style="{ top: `${menuOptionsTop}px` }"
+			>
+				<div class="vac-menu-list">
+					<div v-for="action in filteredMessageActions" :key="action.name">
+						<div class="vac-menu-item" @click="messageActionHandler(action)">
+							{{ action.title }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</transition>
+	</div>
 </template>
 
 <script>
 import vClickOutside from 'click-outside-vue3'
 import SvgIcon from '../../../components/SvgIcon/SvgIcon'
-import EmojiPicker from '../../../components/EmojiPicker/EmojiPicker'
-
-const { isImageFile } = require('../../../utils/media-file')
+import EmojiPickerContainer from '../../../components/EmojiPickerContainer/EmojiPickerContainer'
 
 export default {
-  name: 'MessageActions',
-  directives: {
-    clickOutside: vClickOutside.directive
-  },
-  components: { SvgIcon, EmojiPicker },
+	name: 'MessageActions',
+	components: { SvgIcon, EmojiPickerContainer },
 
-  props: {
-    currentUserId: { type: [String, Number], required: true },
-    message: { type: Object, required: true },
-    messageActions: { type: Array, required: true },
-    roomFooterRef: { type: HTMLDivElement, default: null },
-    showReactionEmojis: { type: Boolean, required: true },
-    hideOptions: { type: Boolean, required: true },
-    messageHover: { type: Boolean, required: true },
-    hoverMessageId: { type: [String, Number], default: null },
-    hoverAudioProgress: { type: Boolean, required: true }
-  },
+	directives: {
+		clickOutside: vClickOutside.directive
+	},
 
-  data() {
-    return {
-      menuOptionsTop: 0,
-      optionsOpened: false,
-      optionsClosing: false,
-      emojiOpened: false
-    }
-  },
+	props: {
+		currentUserId: { type: [String, Number], required: true },
+		message: { type: Object, required: true },
+		messageActions: { type: Array, required: true },
+		roomFooterRef: { type: HTMLDivElement, default: null },
+		showReactionEmojis: { type: Boolean, required: true },
+		hideOptions: { type: Boolean, required: true },
+		messageHover: { type: Boolean, required: true },
+		hoverMessageId: { type: [String, Number], default: null },
+		hoverAudioProgress: { type: Boolean, required: true }
+	},
 
-  computed: {
-    isImage() {
-      return isImageFile(this.message.file)
-    },
-    isMessageActions() {
-      return (
-        this.filteredMessageActions.length &&
-        this.messageHover &&
-        !this.message.deleted &&
-        !this.message.disableActions &&
-        !this.hoverAudioProgress
-      )
-    },
-    isMessageReactions() {
-      return (
-        this.showReactionEmojis &&
-        this.messageHover &&
-        !this.message.deleted &&
-        !this.message.disableReactions &&
-        !this.hoverAudioProgress
-      )
-    },
-    filteredMessageActions() {
-      return this.message.senderId === this.currentUserId
-        ? this.messageActions.filter(
-            (action) =>
-              !action.timeout ||
-              new Date() - this.message.createdDate < 1000 * action.timeout
-          )
-        : this.messageActions.filter((action) => !action.onlyMe)
-    }
-  },
+	emits: [
+		'update-emoji-opened',
+		'update-options-opened',
+		'update-message-hover',
+		'hide-options',
+		'message-action-handler',
+		'send-message-reaction'
+	],
 
-  watch: {
-    emojiOpened(val) {
-      this.$emit('update-emoji-opened', val)
-      if (val) this.optionsOpened = false
-    },
-    hideOptions(val) {
-      if (val) {
-        this.closeEmoji()
-        this.closeOptions()
-      }
-    },
-    optionsOpened(val) {
-      this.$emit('update-options-opened', val)
-    }
-  },
+	data() {
+		return {
+			menuOptionsTop: 0,
+			optionsOpened: false,
+			optionsClosing: false,
+			emojiOpened: false
+		}
+	},
 
-  methods: {
-    openOptions() {
-      if (this.optionsClosing) return
+	computed: {
+		isMessageActions() {
+			return (
+				this.filteredMessageActions.length &&
+				this.messageHover &&
+				!this.message.deleted &&
+				!this.message.disableActions &&
+				!this.hoverAudioProgress
+			)
+		},
+		isMessageReactions() {
+			return (
+				this.showReactionEmojis &&
+				this.messageHover &&
+				!this.message.deleted &&
+				!this.message.disableReactions &&
+				!this.hoverAudioProgress
+			)
+		},
+		filteredMessageActions() {
+			return this.message.senderId === this.currentUserId
+				? this.messageActions.filter(
+						action =>
+							!action.timeout ||
+							new Date() - this.message.createdDate < 1000 * action.timeout
+				  )
+				: this.messageActions.filter(action => !action.onlyMe)
+		}
+	},
 
-      this.optionsOpened = !this.optionsOpened
-      if (!this.optionsOpened) return
+	watch: {
+		emojiOpened(val) {
+			this.$emit('update-emoji-opened', val)
+			if (val) this.optionsOpened = false
+		},
+		hideOptions(val) {
+			if (val) {
+				this.closeEmoji()
+				this.closeOptions()
+			}
+		},
+		optionsOpened(val) {
+			this.$emit('update-options-opened', val)
+		}
+	},
 
-      this.$emit('hide-options', false)
+	methods: {
+		openOptions() {
+			if (this.optionsClosing) return
 
-      setTimeout(() => {
-        if (
-          !this.roomFooterRef ||
-          !this.$refs.menuOptions ||
-          !this.$refs.actionIcon
-        ) {
-          return
-        }
+			this.optionsOpened = !this.optionsOpened
+			if (!this.optionsOpened) return
 
-        const menuOptionsTop =
-          this.$refs.menuOptions.getBoundingClientRect().height
+			this.$emit('hide-options', false)
 
-        const actionIconTop = this.$refs.actionIcon.getBoundingClientRect().top
-        const roomFooterTop = this.roomFooterRef.getBoundingClientRect().top
+			setTimeout(() => {
+				if (
+					!this.roomFooterRef ||
+					!this.$refs.menuOptions ||
+					!this.$refs.actionIcon
+				) {
+					return
+				}
 
-        const optionsTopPosition =
-          roomFooterTop - actionIconTop > menuOptionsTop + 50
+				const menuOptionsTop =
+					this.$refs.menuOptions.getBoundingClientRect().height
 
-        if (optionsTopPosition) this.menuOptionsTop = 30
-        else this.menuOptionsTop = -menuOptionsTop
-      })
-    },
-    closeOptions() {
-      this.optionsOpened = false
-      this.optionsClosing = true
-      this.updateMessageHover()
-      setTimeout(() => (this.optionsClosing = false), 100)
-    },
-    openEmoji() {
-      this.emojiOpened = !this.emojiOpened
-      this.$emit('hide-options', false)
-    },
-    closeEmoji() {
-      this.emojiOpened = false
-      this.updateMessageHover()
-    },
-    updateMessageHover() {
-      if (this.hoverMessageId !== this.message._id) {
-        this.$emit('update-message-hover', false)
-      }
-    },
-    messageActionHandler(action) {
-      this.closeOptions()
-      this.$emit('message-action-handler', action)
-    },
-    sendMessageReaction(emoji, reaction) {
-      this.$emit('send-message-reaction', { emoji, reaction })
-      this.closeEmoji()
-    }
-  }
+				const actionIconTop = this.$refs.actionIcon.getBoundingClientRect().top
+				const roomFooterTop = this.roomFooterRef.getBoundingClientRect().top
+
+				const optionsTopPosition =
+					roomFooterTop - actionIconTop > menuOptionsTop + 50
+
+				if (optionsTopPosition) this.menuOptionsTop = 30
+				else this.menuOptionsTop = -menuOptionsTop
+			})
+		},
+		closeOptions() {
+			this.optionsOpened = false
+			this.optionsClosing = true
+			this.updateMessageHover()
+			setTimeout(() => (this.optionsClosing = false), 100)
+		},
+		openEmoji() {
+			this.emojiOpened = !this.emojiOpened
+			this.$emit('hide-options', false)
+		},
+		closeEmoji() {
+			this.emojiOpened = false
+			this.updateMessageHover()
+		},
+		updateMessageHover() {
+			if (this.hoverMessageId !== this.message._id) {
+				this.$emit('update-message-hover', false)
+			}
+		},
+		messageActionHandler(action) {
+			this.closeOptions()
+			this.$emit('message-action-handler', action)
+		},
+		sendMessageReaction(emoji, reaction) {
+			this.$emit('send-message-reaction', { emoji, reaction })
+			this.closeEmoji()
+		}
+	}
 }
 </script>

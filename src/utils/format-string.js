@@ -1,10 +1,63 @@
 const linkify = require('linkifyjs')
 // require('linkifyjs/plugins/hashtag')(linkify)
 
-export default (text, doLinkify) => {
-	const json = compileToJSON(text)
+export default (text, doLinkify, textFormatting) => {
+	const typeMarkdown = {
+		bold: textFormatting.bold,
+		italic: textFormatting.italic,
+		strike: textFormatting.strike,
+		underline: textFormatting.underline,
+		multilineCode: textFormatting.multilineCode,
+		inlineCode: textFormatting.inlineCode,
+		plain: textFormatting.plain
+	}
 
-	const html = compileToHTML(json)
+	const pseudoMarkdown = {
+		[typeMarkdown.bold]: {
+			end: '\\' + typeMarkdown.bold,
+			allowed_chars: '.',
+			type: 'bold'
+		},
+		[typeMarkdown.italic]: {
+			end: typeMarkdown.italic,
+			allowed_chars: '.',
+			type: 'italic'
+		},
+		[typeMarkdown.strike]: {
+			end: typeMarkdown.strike,
+			allowed_chars: '.',
+			type: 'strike'
+		},
+		[typeMarkdown.underline]: {
+			end: typeMarkdown.underline,
+			allowed_chars: '.',
+			type: 'underline'
+		},
+		[typeMarkdown.multilineCode]: {
+			end: typeMarkdown.multilineCode,
+			allowed_chars: '(.|\n)',
+			type: 'multiline-code'
+		},
+		[typeMarkdown.inlineCode]: {
+			end: typeMarkdown.inlineCode,
+			allowed_chars: '.',
+			type: 'inline-code'
+		},
+		'<usertag>': {
+			allowed_chars: '.',
+			end: '</usertag>',
+			type: 'tag'
+		},
+		[typeMarkdown.plain]: {
+			end: '\\' + typeMarkdown.plain,
+			allowed_chars: '.',
+			type: 'plain'
+		},
+	}
+
+	const json = compileToJSON(text, pseudoMarkdown)
+
+	const html = compileToHTML(json, pseudoMarkdown)
 
 	const result = [].concat.apply([], html)
 
@@ -13,58 +66,7 @@ export default (text, doLinkify) => {
 	return result
 }
 
-const typeMarkdown = {
-	bold: '*',
-	italic: '_',
-	strike: '~',
-	underline: '°',
-	noformat: '|'
-}
-
-const pseudoMarkdown = {
-	[typeMarkdown.bold]: {
-		end: '\\' + [typeMarkdown.bold],
-		allowed_chars: '.',
-		type: 'bold'
-	},
-	[typeMarkdown.italic]: {
-		end: [typeMarkdown.italic],
-		allowed_chars: '.',
-		type: 'italic'
-	},
-	[typeMarkdown.strike]: {
-		end: [typeMarkdown.strike],
-		allowed_chars: '.',
-		type: 'strike'
-	},
-	[typeMarkdown.underline]: {
-		end: [typeMarkdown.underline],
-		allowed_chars: '.',
-		type: 'underline'
-	},
-	[typeMarkdown.noformat]: {
-		end: '\\' + [typeMarkdown.noformat],
-		allowed_chars: '.',
-		type: 'noformat'
-	}
-	// '```': {
-	// 	end: '```',
-	// 	allowed_chars: '(.|\n)',
-	// 	type: 'multiline-code'
-	// },
-	// '`': {
-	// 	end: '`',
-	// 	allowed_chars: '.',
-	// 	type: 'inline-code'
-	// },
-	// '<usertag>': {
-	// 	allowed_chars: '.',
-	// 	end: '</usertag>',
-	// 	type: 'tag'
-	// },
-}
-
-function compileToJSON(str) {
+function compileToJSON(str, pseudoMarkdown) {
 	let result = []
 	let minIndexOf = -1
 	let minIndexOfKey = null
@@ -92,7 +94,7 @@ function compileToJSON(str) {
 		let strRight = str.substr(minIndexOf + links[0].value.length)
 		if (strLeft.length) result.push(strLeft)
 		result.push(strLink)
-		result = result.concat(compileToJSON(strRight))
+		result = result.concat(compileToJSON(strRight, pseudoMarkdown))
 		return result
 	}
 
@@ -108,13 +110,13 @@ function compileToJSON(str) {
 		const match = strRight.match(
 			new RegExp(
 				'^(' +
-					(pseudoMarkdown[char].allowed_chars || '.') +
-					'*' +
-					(pseudoMarkdown[char].end ? '?' : '') +
-					')' +
-					(pseudoMarkdown[char].end
-						? '(' + pseudoMarkdown[char].end + ')'
-						: ''),
+				(pseudoMarkdown[char].allowed_chars || '.') +
+				'*' +
+				(pseudoMarkdown[char].end ? '?' : '') +
+				')' +
+				(pseudoMarkdown[char].end
+					? '(' + pseudoMarkdown[char].end + ')'
+					: ''),
 				'm'
 			)
 		)
@@ -128,7 +130,7 @@ function compileToJSON(str) {
 
 			const type = pseudoMarkdown[char].type
 			var content
-			if (type === 'noformat') {
+			if (type === 'plain') {
 				content = [match[1]]
 			} else {
 				content = compileToJSON(match[1])
@@ -143,7 +145,7 @@ function compileToJSON(str) {
 			result.push(object)
 			strRight = strRight.substr(match[0].length)
 		}
-		result = result.concat(compileToJSON(strRight))
+		result = result.concat(compileToJSON(strRight, pseudoMarkdown))
 		return result
 	} else {
 		if (str.length) {
@@ -154,7 +156,7 @@ function compileToJSON(str) {
 	}
 }
 
-function compileToHTML(json) {
+function compileToHTML(json, pseudoMarkdown) {
 	const result = []
 
 	json.forEach(item => {
@@ -172,25 +174,29 @@ function compileToHTML(json) {
 
 function parseContent(item) {
 	const result = []
+	iterateContent(item, result, [])
+	return result
+}
 
+function iterateContent(item, result, types) {
 	item.content.forEach(it => {
 		if (typeof it === 'string') {
 			result.push({
-				types: [item.type],
+				types: removeDuplicates(types.concat([item.type])),
 				value: it
 			})
 		} else {
-			const subres = parseContent(it)
-			subres.forEach(sr => {
-				result.push({
-					types: [item.type].concat(sr.types),
-					value: sr.value
-				})
-			})
+			iterateContent(
+				it,
+				result,
+				removeDuplicates([it.type].concat([item.type]).concat(types))
+			)
 		}
 	})
+}
 
-	return result
+function removeDuplicates(items) {
+	return [...new Set(items)]
 }
 
 function linkifyResult(array) {

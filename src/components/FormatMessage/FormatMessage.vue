@@ -3,8 +3,15 @@
 		class="vac-format-message-wrapper"
 		:class="{ 'vac-text-ellipsis': singleLine }"
 	>
-		<div v-if="textFormatting" :class="{ 'vac-text-ellipsis': singleLine }">
-			<template v-for="(message, i) in linkifiedMessage" :key="i">
+		<div
+			v-if="!textFormatting.disabled"
+			:class="{ 'vac-text-ellipsis': singleLine }"
+		>
+			<div
+				v-for="(message, i) in linkifiedMessage"
+				:key="i"
+				class="vac-format-container"
+			>
 				<component
 					:is="message.url ? 'a' : 'span'"
 					:class="{
@@ -19,6 +26,7 @@
 					}"
 					:href="message.href"
 					:target="message.href ? linkOptions.target : null"
+					:rel="message.href ? linkOptions.rel : null"
 					@click="openTag(message)"
 				>
 					<slot name="deleted-icon" v-bind="{ deleted }">
@@ -42,7 +50,7 @@
 						<span>{{ message.value }}</span>
 					</template>
 				</component>
-			</template>
+			</div>
 		</div>
 		<div v-else>
 			{{ formattedContent }}
@@ -67,16 +75,18 @@ export default {
 		linkify: { type: Boolean, default: true },
 		singleLine: { type: Boolean, default: false },
 		reply: { type: Boolean, default: false },
-		textFormatting: { type: Boolean, required: true },
+		textFormatting: { type: Object, required: true },
 		linkOptions: { type: Object, required: true }
 	},
+
+	emits: ['open-user-tag'],
 
 	computed: {
 		linkifiedMessage() {
 			const message = formatString(
 				this.formatTags(this.content),
 				this.linkify && !this.linkOptions.disabled,
-				this.linkOptions
+				this.textFormatting
 			)
 
 			message.forEach(m => {
@@ -129,12 +139,6 @@ export default {
 			}
 		},
 		formatTags(content) {
-			// this.users.forEach(user => {
-			// 	const index = content.indexOf(user._id)
-			// 	const isTag = content.substring(index - 9, index) === '<usertag>'
-			// 	if (isTag) content = content.replace(user._id, `@${user.username}`)
-			// })
-
 			return content
 		},
 		openTag(message) {

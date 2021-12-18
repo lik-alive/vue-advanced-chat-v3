@@ -8,20 +8,20 @@
 			<div
 				class="vac-message-image vac-message-image-reply"
 				:style="{
-					'background-image': `url('${message.replyMessage.file.url}')`
+					'background-image': `url('${firstFile.url}')`
 				}"
 			/>
 		</div>
 
 		<div v-else-if="isVideo" class="vac-video-reply-container">
 			<video width="100%" height="100%" controls>
-				<source :src="message.replyMessage.file.url" />
+				<source :src="firstFile.url" />
 			</video>
 		</div>
 
 		<audio-player
 			v-else-if="isAudio"
-			:src="message.replyMessage.file.url"
+			:src="firstFile.url"
 			@update-progress-time="progressTime = $event"
 			@hover-audio-progress="hoverAudioProgress = $event"
 		>
@@ -29,6 +29,23 @@
 				<slot :name="name" v-bind="data" />
 			</template>
 		</audio-player>
+
+		<div v-else-if="isOtherFile" class="vac-file-container">
+			<div>
+				<slot name="file-icon">
+					<svg-icon name="file" />
+				</slot>
+			</div>
+			<div class="vac-text-ellipsis">
+				{{ firstFile.name }}
+			</div>
+			<div
+				v-if="firstFile.extension"
+				class="vac-text-ellipsis vac-text-extension"
+			>
+				{{ firstFile.extension }}
+			</div>
+		</div>
 
 		<div class="vac-reply-content">
 			<format-message
@@ -47,6 +64,7 @@
 </template>
 
 <script>
+import SvgIcon from '../../../components/SvgIcon/SvgIcon'
 import FormatMessage from '../../../components/FormatMessage/FormatMessage'
 
 import AudioPlayer from '../AudioPlayer/AudioPlayer'
@@ -59,11 +77,11 @@ const {
 
 export default {
 	name: 'MessageReply',
-	components: { AudioPlayer, FormatMessage },
+	components: { AudioPlayer, SvgIcon, FormatMessage },
 
 	props: {
 		message: { type: Object, required: true },
-		textFormatting: { type: Boolean, required: true },
+		textFormatting: { type: Object, required: true },
 		linkOptions: { type: Object, required: true },
 		roomUsers: { type: Array, required: true }
 	},
@@ -74,14 +92,27 @@ export default {
 			const replyUser = this.roomUsers.find(user => user._id === senderId)
 			return replyUser ? replyUser.username : ''
 		},
+		firstFile() {
+			return this.message.replyMessage.files?.length
+				? this.message.replyMessage.files[0]
+				: {}
+		},
 		isAudio() {
-			return isAudioFile(this.message.replyMessage.file)
+			return isAudioFile(this.firstFile)
 		},
 		isImage() {
-			return isImageFile(this.message.replyMessage.file)
+			return isImageFile(this.firstFile)
 		},
 		isVideo() {
-			return isVideoFile(this.message.replyMessage.file)
+			return isVideoFile(this.firstFile)
+		},
+		isOtherFile() {
+			return (
+				this.message.replyMessage.files?.length &&
+				!this.isAudio &&
+				!this.isVideo &&
+				!this.isImage
+			)
 		}
 	}
 }
