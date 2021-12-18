@@ -1,17 +1,30 @@
-import Vue, { VNode, Component, PluginFunction } from 'vue'
+import Vue, { VNode, PluginFunction } from 'vue'
 
 export type StringNumber = string | number
 
-export type Rooms = Room[]
+export interface UserStatus {
+	state: 'online' | 'offline'
+	lastChanged: string
+}
 
-export interface Room {
-	roomId: StringNumber
-	roomName: string
-	users: RoomUsers
-	unreadCount?: StringNumber
-	index?: StringNumber | Date
-	lastMessage?: LastMessage
-	typingUsers?: StringNumber[]
+export interface RoomUser {
+	_id: StringNumber
+	username: string
+	avatar: string
+	status: UserStatus
+}
+
+export type RoomUsers = RoomUser[]
+
+export interface MessageFile {
+	name: string
+	type: string
+	url: string
+	preview: string
+	size?: number
+	audio?: boolean
+	duration?: number
+	progress?: number
 }
 
 export interface LastMessage {
@@ -23,53 +36,49 @@ export interface LastMessage {
 	distributed?: boolean
 	seen?: boolean
 	new?: boolean
+	files?: MessageFile[]
 }
 
-export type RoomUsers = RoomUser[]
-
-export interface RoomUser {
-	_id: StringNumber
-	username: string
-	avatar: string
-	status: UserStatus
+export interface Room {
+	roomId: StringNumber
+	roomName: string
+	avatar: String
+	users: RoomUsers
+	unreadCount?: StringNumber
+	index?: StringNumber | Date
+	lastMessage?: LastMessage
+	typingUsers?: StringNumber[]
 }
 
-export interface UserStatus {
-	state: 'online' | 'offline'
-	lastChanged: string
-}
-
-export type Messages = Message[]
-
-export interface Message {
-	_id: StringNumber
-	content: string
-	senderId: StringNumber
-	date: string
-	timestamp: string
-	username?: string
-	system?: boolean
-	saved?: boolean
-	distributed?: boolean
-	seen?: boolean
-	disableActions?: boolean
-	disableReactions?: boolean
-	file?: MessageFile
-	reactions: MessageReactions
-}
-
-export interface MessageFile {
-	name: string
-	type: string
-	url: string
-	size?: number
-	audio?: boolean
-	duration?: number
-}
+export type Rooms = Room[]
 
 export interface MessageReactions {
 	[key: string]: StringNumber[]
 }
+
+export interface Message {
+	_id: StringNumber
+	indexId?: StringNumber
+	content: string
+	senderId: StringNumber
+	username?: string
+	avatar?: string
+	date: string
+	timestamp: string
+	system?: boolean
+	saved?: boolean
+	distributed?: boolean
+	seen?: boolean
+	deleted?: boolean
+	failure?: boolean
+	disableActions?: boolean
+	disableReactions?: boolean
+	files?: MessageFile[]
+	reactions?: MessageReactions
+	replyMessage?: Message
+}
+
+export type Messages = Message[]
 
 export interface CustomAction {
 	name: string
@@ -77,6 +86,16 @@ export interface CustomAction {
 }
 
 export type CustomActions = CustomAction[]
+
+export interface TextFormatting {
+	disabled?: boolean
+	italic?: string
+	bold?: string
+	strike?: string
+	underline?: string
+	multilineCode?: string
+	inlineCode?: string
+}
 
 export interface Slots {
 	'rooms-header': VNode[]
@@ -119,6 +138,7 @@ export interface Slots {
 export interface Props {
 	'current-user-id': StringNumber
 	rooms: Rooms
+	'rooms-order': 'desc' | 'asc'
 	messages: Messages
 	height?: string
 	theme?: 'light' | 'dark'
@@ -142,7 +162,7 @@ export interface Props {
 	'show-new-messages-divider'?: boolean
 	'show-footer'?: boolean
 	'text-messages'?: Record<string, StringNumber>
-	'text-formatting'?: number
+	'text-formatting'?: TextFormatting
 	'responsive-breakpoint'?: boolean
 	'single-room'?: boolean
 	'accepted-files'?: string

@@ -1,5 +1,4 @@
 .vac-reply-container {
-	position: absolute;
 	display: flex;
 	padding: 10px 10px 0 10px;
 	background: var(--chat-footer-bg-color);
@@ -12,7 +11,6 @@
 		background: var(--chat-footer-bg-color-reply);
 		border-radius: 4px;
 		padding: 8px 10px;
-		display: flex;
 	}
 
 	.vac-reply-info {
@@ -43,8 +41,17 @@
 
 	.vac-image-reply {
 		max-height: 100px;
-		margin-right: 10px;
+		max-width: 200px;
+		margin: 4px 10px 0 0;
 		border-radius: 4px;
+	}
+
+	.vac-audio-reply {
+		margin-right: 10px;
+	}
+
+	.vac-file-container {
+		max-width: 80px;
 	}
 }
 

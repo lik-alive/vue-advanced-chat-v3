@@ -28,7 +28,8 @@ export const defaultThemeStyles = {
       borderStyleInput: '1px solid #e1e4e8',
       borderInputSelected: '#1976d2',
       backgroundReply: '#e5e5e6',
-      backgroundTagActive: '#e5e5e6'
+      backgroundTagActive: '#e5e5e6',
+      backgroundTag: '#f8f9fa'
     },
 
     content: {
@@ -84,6 +85,7 @@ export const defaultThemeStyles = {
       backgroundAudioLine: 'rgba(0, 0, 0, 0.15)',
       backgroundAudioProgress: '#455247',
       backgroundAudioProgressSelector: '#455247',
+      colorFileExtension: '#757e85',
       colorFileSize: '#444'
     },
 
@@ -118,6 +120,7 @@ export const defaultThemeStyles = {
       file: '#1976d2',
       paperclip: '#1976d2',
       closeOutline: '#000',
+      closePreview: '#fff',
       send: '#1976d2',
       sendDisabled: '#9ca6af',
       emoji: '#1976d2',
@@ -167,7 +170,8 @@ export const defaultThemeStyles = {
       borderStyleInput: 'none',
       borderInputSelected: '#1976d2',
       backgroundReply: '#1b1c1c',
-      backgroundTagActive: '#1b1c1c'
+      backgroundTagActive: '#1b1c1c',
+      backgroundTag: '#131415'
     },
 
     content: {
@@ -223,6 +227,7 @@ export const defaultThemeStyles = {
       backgroundAudioLine: 'rgba(255, 255, 255, 0.15)',
       backgroundAudioProgress: '#b7d4d3',
       backgroundAudioProgressSelector: '#b7d4d3',
+      colorFileExtension: '#a2a5a8',
       colorFileSize: '#444'
     },
 
@@ -257,6 +262,7 @@ export const defaultThemeStyles = {
       file: '#1976d2',
       paperclip: '#fff',
       closeOutline: '#fff',
+      closePreview: '#fff',
       send: '#fff',
       sendDisabled: '#646a70',
       emoji: '#fff',
@@ -319,6 +325,7 @@ export const cssThemeVars = ({
     '--chat-border-color-input-selected': footer.borderInputSelected,
     '--chat-footer-bg-color-reply': footer.backgroundReply,
     '--chat-footer-bg-color-tag-active': footer.backgroundTagActive,
+    '--chat-footer-bg-color-tag': footer.backgroundTag,
 
     // content
     '--chat-content-bg-color': content.background,
@@ -374,6 +381,7 @@ export const cssThemeVars = ({
     '--chat-message-bg-color-audio-progress': message.backgroundAudioProgress,
     '--chat-message-bg-color-audio-progress-selector':
       message.backgroundAudioProgressSelector,
+    '--chat-message-color-file-extension': message.colorFileExtension,
     '--chat-message-color-file-size': message.colorFileSize,
 
     // markdown
@@ -404,6 +412,7 @@ export const cssThemeVars = ({
     '--chat-icon-color-file': icons.file,
     '--chat-icon-color-paperclip': icons.paperclip,
     '--chat-icon-color-close-outline': icons.closeOutline,
+    '--chat-icon-color-close-preview': icons.closePreview,
     '--chat-icon-color-send': icons.send,
     '--chat-icon-color-send-disabled': icons.sendDisabled,
     '--chat-icon-color-emoji': icons.emoji,
