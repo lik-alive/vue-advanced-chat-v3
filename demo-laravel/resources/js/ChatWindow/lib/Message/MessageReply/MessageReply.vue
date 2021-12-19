@@ -95,7 +95,6 @@ export default {
 			return isAudioFile(this.firstFile)
 		},
 		isImage() {
-			console.log(this.firstFile)
 			return isImageFile(this.firstFile)
 		},
 		isVideo() {
