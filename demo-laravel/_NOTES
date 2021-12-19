@@ -1,0 +1,3 @@
+# Update PHPDoc generated for IDE
+// Package: barryvdh/laravel-ide-helper
+php artisan ide-helper:generate
