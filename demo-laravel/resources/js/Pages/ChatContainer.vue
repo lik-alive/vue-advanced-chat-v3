@@ -98,6 +98,15 @@ export default {
 		}
 	},
 
+	computed: {
+		loadedRooms() {
+			return this.rooms.slice(0, this.roomsLoadedCount)
+		},
+		screenHeight() {
+			return this.isDevice ? '90vh' : '70vh'
+		}
+	},
+
 	mounted() {
 		this.fetchRooms()
 		this.listenMessages()
@@ -114,18 +123,9 @@ export default {
 
 	beforeDestroy() {
 		this.resetRooms()
-		Echo.private(`user.${this.$page.props.user.id}`).stopListening(
+		Echo.private(`user.${this.currentUserId}`).stopListening(
 			'MessageCenter.MessageUpdate'
 		)
-	},
-
-	computed: {
-		loadedRooms() {
-			return this.rooms.slice(0, this.roomsLoadedCount)
-		},
-		screenHeight() {
-			return this.isDevice ? '90vh' : '70vh'
-		}
 	},
 
 	methods: {
@@ -188,7 +188,7 @@ export default {
 		 * Get portion of rooms from the server
 		 */
 		async fetchMoreRooms(roomId = null) {
-			var rooms = null
+			let rooms = null
 
 			if (roomId === null) {
 				rooms = await this.loadRooms()
@@ -206,10 +206,10 @@ export default {
 			// Identify non-fetched users
 			const newUserIds = []
 			rooms.forEach(room => {
-				room.userIds.forEach(user_id => {
-					const foundUser = this.allUsers.find(u => u._id === user_id)
-					if (!foundUser && newUserIds.indexOf(user_id) === -1) {
-						newUserIds.push(user_id)
+				room.userIds.forEach(userId => {
+					const foundUser = this.allUsers.find(u => u._id === userId)
+					if (!foundUser && !newUserIds.includes(userId)) {
+						newUserIds.push(userId)
 					}
 				})
 			})
@@ -318,7 +318,7 @@ export default {
 		 */
 		listenMessages() {
 			// Listen to websocket
-			Echo.private(`user.${this.$page.props.user.id}`).listen(
+			Echo.private(`user.${this.currentUserId}`).listen(
 				'MessageCenter.MessageUpdate',
 				e => {
 					const msg = e.message
@@ -367,16 +367,11 @@ export default {
 						this.startMessages += 1
 					}
 					// Edit message
-					else {
-						if (
-							msg.created_at !== msg.updated_at &&
-							msg.updated_at > this.messages[msgIndex].updated_at
-						) {
-							this.messages[msgIndex] = this.formatMessage(
-								room,
-								msg
-							)
-						}
+					else if (
+						msg.created_at !== msg.updated_at &&
+						msg.updated_at > this.messages[msgIndex].updated_at
+					) {
+						this.messages[msgIndex] = this.formatMessage(room, msg)
 					}
 				}
 			)
@@ -391,7 +386,7 @@ export default {
 		},
 
 		DownloadFile(url, data = null, options = {}) {
-			var defOptions = {
+			const defOptions = {
 				method: 'GET',
 				responseType: 'blob',
 				type: 'application/octet-stream'
@@ -406,14 +401,14 @@ export default {
 				responseType: defOptions.responseType,
 				onDownloadProgress: options.onDownloadProgress
 			}).then(res => {
-				let blob = new Blob([res.data], { type: defOptions.type })
+				const blob = new Blob([res.data], { type: defOptions.type })
 				if (!blob.size) throw new Error('Empty file')
 
-				var filename = defOptions.prefix || ''
+				let filename = defOptions.prefix || ''
 				if (defOptions.filename) {
 					filename += defOptions.filename
-				} else if (res.headers['filename']) {
-					filename += res.headers['filename']
+				} else if (res.headers.filename) {
+					filename += res.headers.filename
 				} else if (res.headers['content-disposition']) {
 					const rus = res.headers['content-disposition'].match(
 						/filename\*=utf-8''(.*)/
@@ -439,7 +434,7 @@ export default {
 		 */
 		sendMessage({ content, roomId, files, replyMessage }) {
 			const date = new Date()
-			const tempId = date.getTime() + '_' + this.$page.props.user.id
+			const tempId = date.getTime() + '_' + this.currentUserId
 			const msg = {
 				_id: tempId,
 				indexId: tempId,
@@ -470,7 +465,7 @@ export default {
 			// // Update last message
 			room.lastMessage = this.formatLastMessage(msg)
 
-			var fd = new FormData()
+			const fd = new FormData()
 			fd.append('content', msg.content)
 
 			if (files) {
@@ -537,7 +532,7 @@ export default {
 			// Update last message
 			room.lastMessage = this.formatLastMessage(msg)
 
-			var fd = new FormData()
+			const fd = new FormData()
 			fd.append('content', msg.content)
 
 			files.forEach(file => {
@@ -603,7 +598,7 @@ export default {
 				})
 		},
 
-		//------------------ PARTS
+		// ------------------ PARTS
 
 		async loadRooms() {
 			const res = await axios
@@ -629,7 +624,7 @@ export default {
 			return res.data
 		},
 
-		//------------------ FORMATTERS
+		// ------------------ FORMATTERS
 
 		/**
 		 * Format room
@@ -713,7 +708,7 @@ export default {
 			}
 		},
 
-		//------------------ HELPERS
+		// ------------------ HELPERS
 
 		/**
 		 * Process an axios error
@@ -723,8 +718,7 @@ export default {
 			// Canceled
 			if (axios.isCancel(e)) return
 
-			//TODO
-			var msg = this.firstError(e)
+			let msg = this.firstError(e)
 			if (msg === null) msg = 'An error has occurred'
 			console.error(msg)
 		},
@@ -736,7 +730,7 @@ export default {
 			return errors[Object.keys(errors)[0]][0]
 		},
 
-		//------------------ UTILS
+		// ------------------ UTILS
 
 		/**
 		 * Check file size and name

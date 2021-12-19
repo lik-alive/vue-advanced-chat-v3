@@ -43,7 +43,7 @@ class MessageMassNotification extends Notification implements ShouldQueue
    * @return \Illuminate\Notifications\Messages\MailMessage
    */
   public function toMail($notifiable)
-  { //TODO
+  {
     $messages = $this->messages;
     $html = "";
     foreach ($messages as $message) {
