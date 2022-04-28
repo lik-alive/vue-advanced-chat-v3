@@ -20,6 +20,7 @@
 			:room-message="roomMessage"
 			:load-first-room="loadFirstRoom"
 			:force-username="true"
+			:multiple-files="false"
 			@toggle-rooms-list="toggleRoomsList"
 			@fetch-more-rooms="fetchMoreRooms"
 			@fetch-messages="fetchMessages"

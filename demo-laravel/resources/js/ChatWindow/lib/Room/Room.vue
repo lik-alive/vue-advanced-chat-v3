@@ -282,7 +282,7 @@
 						v-if="showFiles"
 						ref="file"
 						type="file"
-						multiple
+						:multiple="multipleFiles"
 						:accept="acceptedFiles"
 						style="display: none"
 						@change="onFileChange($event.target.files)"
@@ -390,7 +390,8 @@ export default {
 		emojisSuggestionEnabled: { type: Boolean, required: true },
 		scrollDistance: { type: Number, required: true },
 		forceUsername: { type: Boolean, default: false },
-		templatesText: { type: Array, default: null }
+		templatesText: { type: Array, default: null },
+		multipleFiles: { type: Boolean, default: true }
 	},
 
 	emits: [
@@ -1147,6 +1148,8 @@ export default {
 		async onFileChange(files) {
 			this.fileDialog = true
 			this.focusTextarea()
+
+			if (!this.multipleFiles) this.files = [];
 
 			Array.from(files).forEach(async file => {
 				const fileURL = URL.createObjectURL(file)

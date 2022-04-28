@@ -62,7 +62,7 @@
 				:accepted-files="acceptedFiles"
 				:templates-text="templatesText"
 				:force-username="forceUsername"
-				:files-multiple="filesMultiple"
+				:multiple-files="multipleFiles"
 				@toggle-rooms-list="toggleRoomsList"
 				@room-info="roomInfo"
 				@fetch-messages="fetchMessages"
@@ -190,7 +190,7 @@ export default {
 		templatesText: { type: Array, default: null },
 		forceUsername: { type: Boolean, default: false },
 		mediaPreviewEnabled: { type: Boolean, default: true },
-		filesMultiple: { type: Boolean, default: true }
+		multipleFiles: { type: Boolean, default: true }
 	},
 
 	emits: [
