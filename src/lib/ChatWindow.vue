@@ -62,6 +62,7 @@
 				:accepted-files="acceptedFiles"
 				:templates-text="templatesText"
 				:force-username="forceUsername"
+				:files-multiple="filesMultiple"
 				@toggle-rooms-list="toggleRoomsList"
 				@room-info="roomInfo"
 				@fetch-messages="fetchMessages"
@@ -188,7 +189,8 @@ export default {
 		acceptedFiles: { type: String, default: '*' },
 		templatesText: { type: Array, default: null },
 		forceUsername: { type: Boolean, default: false },
-		mediaPreviewEnabled: { type: Boolean, default: true }
+		mediaPreviewEnabled: { type: Boolean, default: true },
+		filesMultiple: { type: Boolean, default: true }
 	},
 
 	emits: [

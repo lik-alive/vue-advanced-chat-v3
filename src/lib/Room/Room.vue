@@ -282,7 +282,7 @@
 						v-if="showFiles"
 						ref="file"
 						type="file"
-						multiple
+						:multiple="filesMultiple"
 						:accept="acceptedFiles"
 						style="display: none"
 						@change="onFileChange($event.target.files)"
@@ -390,7 +390,8 @@ export default {
 		emojisSuggestionEnabled: { type: Boolean, required: true },
 		scrollDistance: { type: Number, required: true },
 		forceUsername: { type: Boolean, default: false },
-		templatesText: { type: Array, default: null }
+		templatesText: { type: Array, default: null },
+		filesMultiple: { type: Boolean, default: true }
 	},
 
 	emits: [
