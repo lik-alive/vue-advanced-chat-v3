@@ -62,7 +62,7 @@
 import SvgIcon from '../SvgIcon/SvgIcon'
 
 import formatString from '../../utils/format-string'
-import { IMAGE_TYPES } from '../../utils/constants'
+// import { IMAGE_TYPES } from '../../utils/constants'
 
 export default {
 	name: 'FormatMessage',
@@ -112,32 +112,32 @@ export default {
 		checkType(message, type) {
 			return message.types.indexOf(type) !== -1
 		},
-		checkImageType(message) {
-			let index = message.value.lastIndexOf('.')
-			const slashIndex = message.value.lastIndexOf('/')
-			if (slashIndex > index) index = -1
+		// checkImageType(message) {
+		// 	let index = message.value.lastIndexOf('.')
+		// 	const slashIndex = message.value.lastIndexOf('/')
+		// 	if (slashIndex > index) index = -1
 
-			const type = message.value.substring(index + 1, message.value.length)
+		// 	const type = message.value.substring(index + 1, message.value.length)
 
-			const isMedia =
-				index > 0 && IMAGE_TYPES.some(t => type.toLowerCase().includes(t))
+		// 	const isMedia =
+		// 		index > 0 && IMAGE_TYPES.some(t => type.toLowerCase().includes(t))
 
-			if (isMedia) this.setImageSize(message)
+		// 	if (isMedia) this.setImageSize(message)
 
-			return isMedia
-		},
-		setImageSize(message) {
-			const image = new Image()
-			image.src = message.url
+		// 	return isMedia
+		// },
+		// setImageSize(message) {
+		// 	const image = new Image()
+		// 	image.src = message.url
 
-			image.addEventListener('load', onLoad)
+		// 	image.addEventListener('load', onLoad)
 
-			function onLoad(img) {
-				const ratio = img.path[0].width / 150
-				message.height = Math.round(img.path[0].height / ratio) + 'px'
-				image.removeEventListener('load', onLoad)
-			}
-		},
+		// 	function onLoad(img) {
+		// 		const ratio = img.path[0].width / 150
+		// 		message.height = Math.round(img.path[0].height / ratio) + 'px'
+		// 		image.removeEventListener('load', onLoad)
+		// 	}
+		// },
 		formatTags(content) {
 			/*
 			const firstTag = '<usertag>'

@@ -220,7 +220,9 @@
 					}"
 					:style="{
 						'min-height': `20px`,
-						'padding-left': `12px`
+						'padding-left': `12px`,
+						'max-height': '150px',
+    				'overflow': 'auto'
 					}"
 					@input="onChangeInput"
 					@keydown.esc="escapeTextarea"

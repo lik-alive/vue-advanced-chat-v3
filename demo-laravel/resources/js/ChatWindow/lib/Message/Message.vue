@@ -1,5 +1,9 @@
 <template>
-	<div :id="message._id" :ref="'msg' + message._id" class="vac-message-wrapper">
+	<div
+		:id="message._id"
+		:ref="'msg' + message._id"
+		class="vac-message-wrapper"
+	>
 		<div v-if="showDate" class="vac-card-info vac-card-date">
 			{{ message.date }}
 		</div>
@@ -25,7 +29,9 @@
 		<div
 			v-else
 			class="vac-message-box"
-			:class="{ 'vac-offset-current': message.senderId === currentUserId }"
+			:class="{
+				'vac-offset-current': message.senderId === currentUserId
+			}"
 		>
 			<slot name="message" v-bind="{ message }">
 				<div
@@ -43,7 +49,8 @@
 						class="vac-message-card"
 						:class="{
 							'vac-message-highlight': isMessageHover,
-							'vac-message-current': message.senderId === currentUserId,
+							'vac-message-current':
+								message.senderId === currentUserId,
 							'vac-message-deleted': message.deleted
 						}"
 						@mouseover="onHoverMessage"
@@ -56,7 +63,8 @@
 							"
 							class="vac-text-username"
 							:class="{
-								'vac-username-reply': !message.deleted && message.replyMessage
+								'vac-username-reply':
+									!message.deleted && message.replyMessage
 							}"
 						>
 							<span>{{ message.username }}</span>
@@ -69,14 +77,20 @@
 							:text-formatting="textFormatting"
 							:link-options="linkOptions"
 						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
+							<template
+								v-for="(i, name) in $scopedSlots"
+								#[name]="data"
+							>
 								<slot :name="name" v-bind="data" />
 							</template>
 						</message-reply>
 
 						<div v-if="message.deleted">
 							<slot name="deleted-icon">
-								<svg-icon name="deleted" class="vac-icon-deleted" />
+								<svg-icon
+									name="deleted"
+									class="vac-icon-deleted"
+								/>
 							</slot>
 							<span>{{ textMessages.MESSAGE_DELETED }}</span>
 						</div>
@@ -89,7 +103,10 @@
 							:link-options="linkOptions"
 							@open-user-tag="openUserTag"
 						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
+							<template
+								v-for="(i, name) in $scopedSlots"
+								#[name]="data"
+							>
 								<slot :name="name" v-bind="data" />
 							</template>
 						</format-message>
@@ -103,7 +120,10 @@
 							:link-options="linkOptions"
 							@open-file="openFile"
 						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
+							<template
+								v-for="(i, name) in $scopedSlots"
+								#[name]="data"
+							>
 								<slot :name="name" v-bind="data" />
 							</template>
 						</message-files>
@@ -113,14 +133,22 @@
 								:message-id="message._id"
 								:src="message.files[0].url"
 								@update-progress-time="progressTime = $event"
-								@hover-audio-progress="hoverAudioProgress = $event"
+								@hover-audio-progress="
+									hoverAudioProgress = $event
+								"
 							>
-								<template v-for="(i, name) in $scopedSlots" #[name]="data">
+								<template
+									v-for="(i, name) in $scopedSlots"
+									#[name]="data"
+								>
 									<slot :name="name" v-bind="data" />
 								</template>
 							</audio-player>
 
-							<div v-if="!message.deleted" class="vac-progress-time">
+							<div
+								v-if="!message.deleted"
+								class="vac-progress-time"
+							>
 								{{ progressTime }}
 							</div>
 						</template>
@@ -136,10 +164,15 @@
 							</div>
 							<span>{{ message.timestamp }}</span>
 							<span v-if="isCheckmarkVisible">
-								<slot name="checkmark-icon" v-bind="{ message }">
+								<slot
+									name="checkmark-icon"
+									v-bind="{ message }"
+								>
 									<svg-icon
 										:name="
-											message.distributed ? 'double-checkmark' : 'checkmark'
+											message.distributed
+												? 'double-checkmark'
+												: 'checkmark'
 										"
 										:param="message.seen ? 'seen' : ''"
 										class="vac-icon-check"
@@ -166,7 +199,10 @@
 							@message-action-handler="messageActionHandler"
 							@send-message-reaction="sendMessageReaction"
 						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
+							<template
+								v-for="(i, name) in $scopedSlots"
+								#[name]="data"
+							>
 								<slot :name="name" v-bind="data" />
 							</template>
 						</message-actions>
@@ -180,11 +216,15 @@
 				</div>
 				<slot name="message-failure" v-bind="{ message }">
 					<div
-						v-if="message.failure && message.senderId === currentUserId"
+						v-if="
+							message.failure &&
+							message.senderId === currentUserId
+						"
 						class="vac-failure-container vac-svg-button"
 						:class="{
 							'vac-failure-container-avatar':
-								message.avatar && message.senderId === currentUserId
+								message.avatar &&
+								message.senderId === currentUserId
 						}"
 						@click="$emit('open-failed-message', { message })"
 					>
@@ -294,7 +334,9 @@ export default {
 			return (
 				this.message.senderId === this.currentUserId &&
 				!this.message.deleted &&
-				(this.message.saved || this.message.distributed || this.message.seen)
+				(this.message.saved ||
+					this.message.distributed ||
+					this.message.seen)
 			)
 		}
 	},
@@ -335,7 +377,8 @@ export default {
 			return !this.message.deleted
 		},
 		onLeaveMessage() {
-			if (!this.optionsOpened && !this.emojiOpened) this.messageHover = false
+			if (!this.optionsOpened && !this.emojiOpened)
+				this.messageHover = false
 			this.hoverMessageId = null
 		},
 		openFile(file) {
@@ -349,7 +392,10 @@ export default {
 			this.hoverMessageId = null
 
 			setTimeout(() => {
-				this.$emit('message-action-handler', { action, message: this.message })
+				this.$emit('message-action-handler', {
+					action,
+					message: this.message
+				})
 			}, 300)
 		},
 		sendMessageReaction({ emoji, reaction }) {

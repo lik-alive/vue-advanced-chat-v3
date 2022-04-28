@@ -42,7 +42,9 @@
 					<svg-icon name="file" />
 				</slot>
 			</div>
-			<div class="vac-text-ellipsis">{{ fullName }}</div>
+			<div class="vac-text-ellipsis">
+				{{ fullName }}
+			</div>
 		</div>
 	</div>
 </template>
