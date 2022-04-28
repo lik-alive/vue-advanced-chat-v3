@@ -222,7 +222,7 @@
 						'min-height': `20px`,
 						'padding-left': `12px`,
 						'max-height': '150px',
-    				'overflow': 'auto'
+						overflow: 'auto'
 					}"
 					@input="onChangeInput"
 					@keydown.esc="escapeTextarea"
@@ -1151,7 +1151,7 @@ export default {
 			this.fileDialog = true
 			this.focusTextarea()
 
-			if (!this.multipleFiles) this.files = [];
+			if (!this.multipleFiles) this.files = []
 
 			Array.from(files).forEach(async file => {
 				const fileURL = URL.createObjectURL(file)
