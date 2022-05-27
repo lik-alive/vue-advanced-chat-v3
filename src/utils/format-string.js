@@ -18,7 +18,9 @@ export default (text, doLinkify) => {
 		italic: '_',
 		strike: '~',
 		underline: '°',
-		noformat: '|'
+		noformat: '|',
+		label_s: '[',
+		label_e: ']'
 	}
 
 	const pseudoMarkdown = {
@@ -46,7 +48,27 @@ export default (text, doLinkify) => {
 			end: '\\' + typeMarkdown.noformat,
 			allowed_chars: '.',
 			type: 'noformat'
+		},
+		[typeMarkdown.label_s]: {
+			end: '\\' + [typeMarkdown.label_e],
+			allowed_chars: '.',
+			type: 'label'
 		}
+		// '```': {
+		// 	end: '```',
+		// 	allowed_chars: '(.|\n)',
+		// 	type: 'multiline-code'
+		// },
+		// '`': {
+		// 	end: '`',
+		// 	allowed_chars: '.',
+		// 	type: 'inline-code'
+		// },
+		// '<usertag>': {
+		// 	allowed_chars: '.',
+		// 	end: '</usertag>',
+		// 	type: 'tag'
+		// },
 	}
 
 function compileToJSON(str) {
@@ -113,7 +135,7 @@ function compileToJSON(str) {
 
 			const type = pseudoMarkdown[char].type
 			var content
-			if (type === 'noformat') {
+			if (type === 'noformat' || type === 'label') {
 				content = [match[1]]
 			} else {
 				content = compileToJSON(match[1])
