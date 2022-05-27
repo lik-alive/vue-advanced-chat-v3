@@ -158,8 +158,7 @@ export default {
       loadingMoreRooms: false,
       showRoomsList: true,
       isMobile: false,
-      imagePreview: false,
-      imagePreview: null
+      imagePreview: false
     }
   },
 

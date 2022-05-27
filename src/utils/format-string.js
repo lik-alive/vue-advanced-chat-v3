@@ -54,6 +54,21 @@ const pseudoMarkdown = {
 		allowed_chars: '.',
 		type: 'label'
 	}
+	// '```': {
+	// 	end: '```',
+	// 	allowed_chars: '(.|\n)',
+	// 	type: 'multiline-code'
+	// },
+	// '`': {
+	// 	end: '`',
+	// 	allowed_chars: '.',
+	// 	type: 'inline-code'
+	// },
+	// '<usertag>': {
+	// 	allowed_chars: '.',
+	// 	end: '</usertag>',
+	// 	type: 'tag'
+	// },
 }
 
 function compileToJSON(str) {
