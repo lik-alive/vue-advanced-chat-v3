@@ -224,7 +224,7 @@ function linkifyResult(array) {
 				const prev = result[result.length - 1]
 				if (prev.types.includes('label')) {
 					arr.value = prev.value.substr(1, prev.value.length - 2)
-					result.pop();
+					result.pop()
 				}
 			}
 		}
