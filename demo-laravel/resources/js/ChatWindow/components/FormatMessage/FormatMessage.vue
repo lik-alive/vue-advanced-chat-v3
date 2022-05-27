@@ -7,12 +7,11 @@
 			v-if="!textFormatting.disabled"
 			:class="{ 'vac-text-ellipsis': singleLine }"
 		>
-			<div
+			<span
 				v-for="(message, i) in linkifiedMessage"
 				:key="i"
 				class="vac-format-container"
-			>
-				<component
+				><component
 					:is="message.url ? 'a' : 'span'"
 					:class="{
 						'vac-text-ellipsis': singleLine,
@@ -21,18 +20,21 @@
 						'vac-text-strike': message.strike,
 						'vac-text-underline': message.underline,
 						'vac-text-inline-code': !singleLine && message.inline,
-						'vac-text-multiline-code': !singleLine && message.multiline,
+						'vac-text-multiline-code':
+							!singleLine && message.multiline,
 						'vac-text-tag': !singleLine && !reply && message.tag
 					}"
 					:href="message.href"
 					:target="message.href ? linkOptions.target : null"
 					:rel="message.href ? linkOptions.rel : null"
 					@click="openTag(message)"
-				>
-					<slot name="deleted-icon" v-bind="{ deleted }">
-						<svg-icon v-if="deleted" name="deleted" class="vac-icon-deleted" />
-					</slot>
-					<template v-if="message.url && message.image">
+					><slot name="deleted-icon" v-bind="{ deleted }">
+						<svg-icon
+							v-if="deleted"
+							name="deleted"
+							class="vac-icon-deleted"
+						/> </slot
+					><template v-if="message.url && message.image">
 						<div class="vac-image-link-container">
 							<div
 								class="vac-image-link"
@@ -44,13 +46,12 @@
 						</div>
 						<div class="vac-image-link-message">
 							<span>{{ message.value }}</span>
-						</div>
-					</template>
-					<template v-else>
-						<span>{{ message.value }}</span>
-					</template>
-				</component>
-			</div>
+						</div> </template
+					><template v-else
+						><span>{{ message.value }}</span></template
+					></component
+				></span
+			>
 		</div>
 		<div v-else>
 			{{ formattedContent }}

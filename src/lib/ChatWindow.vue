@@ -96,7 +96,6 @@
 <script>
 import RoomsList from './RoomsList/RoomsList'
 import Room from './Room/Room'
-import MediaPreview from './MediaPreview/MediaPreview'
 
 import locales from '../locales'
 import { defaultThemeStyles, cssThemeVars } from '../themes'
@@ -109,8 +108,7 @@ export default {
 	name: 'ChatContainer',
 	components: {
 		RoomsList,
-		Room,
-		MediaPreview
+		Room
 	},
 
 	props: {
