@@ -18,50 +18,42 @@ const typeMarkdown = {
 	italic: '_',
 	strike: '~',
 	underline: '°',
-	noformat: '|'
+	noformat: '|',
+	label_s: '[',
+	label_e: ']'
 }
 
 const pseudoMarkdown = {
 	[typeMarkdown.bold]: {
-		end: '\\' + [typeMarkdown.bold],
+		end: '\\' + typeMarkdown.bold,
 		allowed_chars: '.',
 		type: 'bold'
 	},
 	[typeMarkdown.italic]: {
-		end: [typeMarkdown.italic],
+		end: typeMarkdown.italic,
 		allowed_chars: '.',
 		type: 'italic'
 	},
 	[typeMarkdown.strike]: {
-		end: [typeMarkdown.strike],
+		end: typeMarkdown.strike,
 		allowed_chars: '.',
 		type: 'strike'
 	},
 	[typeMarkdown.underline]: {
-		end: [typeMarkdown.underline],
+		end: typeMarkdown.underline,
 		allowed_chars: '.',
 		type: 'underline'
 	},
 	[typeMarkdown.noformat]: {
-		end: '\\' + [typeMarkdown.noformat],
+		end: '\\' + typeMarkdown.noformat,
 		allowed_chars: '.',
 		type: 'noformat'
+	},
+	[typeMarkdown.label_s]: {
+		end: '\\' + [typeMarkdown.label_e],
+		allowed_chars: '.',
+		type: 'label'
 	}
-	// '```': {
-	// 	end: '```',
-	// 	allowed_chars: '(.|\n)',
-	// 	type: 'multiline-code'
-	// },
-	// '`': {
-	// 	end: '`',
-	// 	allowed_chars: '.',
-	// 	type: 'inline-code'
-	// },
-	// '<usertag>': {
-	// 	allowed_chars: '.',
-	// 	end: '</usertag>',
-	// 	type: 'tag'
-	// },
 }
 
 function compileToJSON(str) {
@@ -128,7 +120,7 @@ function compileToJSON(str) {
 
 			const type = pseudoMarkdown[char].type
 			var content
-			if (type === 'noformat') {
+			if (type === 'noformat' || type === 'label') {
 				content = [match[1]]
 			} else {
 				content = compileToJSON(match[1])
@@ -172,25 +164,29 @@ function compileToHTML(json) {
 
 function parseContent(item) {
 	const result = []
+	iterateContent(item, result, [])
+	return result
+}
 
+function iterateContent(item, result, types) {
 	item.content.forEach(it => {
 		if (typeof it === 'string') {
 			result.push({
-				types: [item.type],
+				types: removeDuplicates(types.concat([item.type])),
 				value: it
 			})
 		} else {
-			const subres = parseContent(it)
-			subres.forEach(sr => {
-				result.push({
-					types: [item.type].concat(sr.types),
-					value: sr.value
-				})
-			})
+			iterateContent(
+				it,
+				result,
+				removeDuplicates([it.type].concat([item.type]).concat(types))
+			)
 		}
 	})
+}
 
-	return result
+function removeDuplicates(items) {
+	return [...new Set(items)]
 }
 
 function linkifyResult(array) {
