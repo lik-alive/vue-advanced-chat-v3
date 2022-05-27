@@ -115,13 +115,13 @@ function compileToJSON(str) {
 		const match = strRight.match(
 			new RegExp(
 				'^(' +
-					(pseudoMarkdown[char].allowed_chars || '.') +
-					'*' +
-					(pseudoMarkdown[char].end ? '?' : '') +
-					')' +
-					(pseudoMarkdown[char].end
-						? '(' + pseudoMarkdown[char].end + ')'
-						: ''),
+				(pseudoMarkdown[char].allowed_chars || '.') +
+				'*' +
+				(pseudoMarkdown[char].end ? '?' : '') +
+				')' +
+				(pseudoMarkdown[char].end
+					? '(' + pseudoMarkdown[char].end + ')'
+					: ''),
 				'm'
 			)
 		)
@@ -135,8 +135,10 @@ function compileToJSON(str) {
 
 			const type = pseudoMarkdown[char].type
 			var content
-			if (type === 'noformat' || type === 'label') {
+			if (type === 'noformat') {
 				content = [match[1]]
+			} else if (type === 'label') {
+				content = ['[' + match[1] + ']']
 			} else {
 				content = compileToJSON(match[1])
 			}
@@ -206,7 +208,6 @@ function removeDuplicates(items) {
 
 function linkifyResult(array) {
 	const result = []
-	const regVal = new RegExp('.*\\[(.+)\\]$')
 
 	array.forEach(arr => {
 		const links = linkify.find(arr.value)
@@ -221,13 +222,9 @@ function linkifyResult(array) {
 
 			if (result.length) {
 				const prev = result[result.length - 1]
-				const match = prev.value.match(regVal)
-				if (match) {
-					arr.value = match[1].trim()
-					prev.value = prev.value.substr(
-						0,
-						prev.value.length - match[1].length - 2
-					)
+				if (prev.types.includes('label')) {
+					arr.value = prev.value.substr(1, prev.value.length - 2)
+					result.pop();
 				}
 			}
 		}
